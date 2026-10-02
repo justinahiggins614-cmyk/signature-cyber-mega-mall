@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Signature Cyber Mega-Mall — Grand Opening · Everything $0.00</title>
 <meta name="description" content="The Signature Cyber Mega-Mall: the universal storefront layer over the JAH Network. AI, software, knowledge, inventions, compute and tools — every product deep-links to its live source record. Grand opening: everything FREE at $0.00.">
+<link rel="canonical" href="https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Signature Cyber Mega-Mall","url":"https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/","creator":{"@type":"Person","name":"Justin Addam Higgins"},"description":"The universal storefront layer over the JAH Network: 8,821 original Signature products across AI & software, knowledge, inventions, compute and tools. Grand opening: everything $0.00; checkout inactive until the site goes active."}</script>
 <style>
 :root{--bg:#05070f;--bg2:#0a0f22;--line:#1c2745;--txt:#d7e3ff;--dim:#8b98b8;
 --cy:#00f0ff;--mg:#ff2fb3;--gd:#ffcf4d;--gr:#4dff9d;--vi:#9d6bff;--am:#ffb14d;
@@ -279,6 +281,10 @@ async function gz(url){
   if(!r.ok)throw new Error("HTTP "+r.status+" "+url);
   return await new Response(r.body.pipeThrough(new DecompressionStream("gzip"))).text();
 }
+/* per-product head (title/meta/canonical) for crawlers & sharing — additive, no visual change */
+var _mhome=null;
+function mHome(){if(!_mhome){var md=document.querySelector('meta[name="description"]'),cl=document.querySelector('link[rel="canonical"]');_mhome={t:document.title,d:md?md.getAttribute("content"):"",c:cl?cl.getAttribute("href"):"https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/"}}return _mhome}
+function mHead(title,desc,canon){var h=mHome();document.title=title||h.t;var md=document.querySelector('meta[name="description"]');if(md)md.setAttribute("content",desc||h.d);var cl=document.querySelector('link[rel="canonical"]');if(cl)cl.setAttribute("href",canon||h.c)}
 const Mall={
   manifest:null, idx:null, deptCache:{}, shown:0, pageSize:60,
   curDept:"all", curLetter:"", curQuery:"",
@@ -587,9 +593,10 @@ const Mall={
     <p style="font-size:.78em;color:var(--dim);margin-top:12px">Deep link: <span style="color:#9fc2ff">?product=${full.id}</span> · share it anywhere.</p>`;
     document.getElementById("overlay").classList.add("open");
     history.replaceState(null,"","?product="+full.id);
+    mHead(full.name+" — Signature Cyber Mega-Mall",(full.blurb||full.name+" — $0.00 at the Signature Cyber Mega-Mall"),"https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/?product="+full.id);
     this.paintPlate(full.id);
   },
-  closeModal(){document.getElementById("overlay").classList.remove("open");history.replaceState(null,"",location.pathname)}
+  closeModal(){document.getElementById("overlay").classList.remove("open");var _h=mHome();mHead(_h.t,_h.d,_h.c);try{history.replaceState(null,"",_h.c)}catch(e){history.replaceState(null,"",location.pathname)}}
 };
 /* ============ tiered read-aloud: same chain as the other nine sites ============
    speechSynthesis (en-US female preferred) first; online tiers fail over
