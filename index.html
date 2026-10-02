@@ -59,6 +59,33 @@ background-size:44px 44px}
 .az{display:flex;flex-wrap:wrap;gap:4px;margin:10px 0}
 .az button{background:none;border:1px solid var(--line);color:var(--dim);border-radius:6px;min-width:32px;padding:5px 6px;cursor:pointer;font-size:.85em}
 .az button.on{background:var(--cy);color:#03131a;font-weight:800;border-color:var(--cy)}
+/* mall map + guide */
+.mallmap{margin-top:14px}
+.mallmap svg{width:100%;height:auto;display:block;background:#04060d;border:1px solid var(--line);border-radius:14px}
+.mallmap .store{cursor:pointer}
+.mallmap .store:hover rect{stroke:#ffffff!important}
+.mapcap{color:var(--dim);font-size:.85em;text-align:center;margin-top:8px}
+/* per-product YOU ARE HERE strip */
+.youarehere{margin:10px 0;padding:10px 14px;border:1px solid var(--gd);border-radius:10px;background:#1a1206aa;color:var(--gd);font-weight:700;letter-spacing:.03em;font-size:.92em;line-height:1.6}
+.youarehere .yah-star{color:#ff3b3b;text-shadow:0 0 12px #ff3b3b;margin-right:6px}
+/* make-it-yours personalization */
+.custom{margin-top:16px;border:1px dashed var(--mg);border-radius:12px;padding:14px;background:#160a18}
+.custom h4{color:var(--mg);letter-spacing:.14em;margin:.1em 0 .3em}
+.custom p{color:var(--dim);font-size:.88em;margin:.2em 0 .6em}
+.custom .crow{display:flex;gap:8px;flex-wrap:wrap}
+.custom input{flex:1;min-width:160px;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#060b1c;color:var(--txt);font-size:1em}
+.plate{margin-top:12px;border:2px solid var(--gd);border-radius:12px;padding:14px;background:linear-gradient(180deg,#171106,#0d0a04);text-align:center}
+.plate .pl-title{color:#fff;letter-spacing:.08em;font-size:1.02em}
+.plate .pl-id{color:var(--cy);font-weight:800;letter-spacing:.1em;margin:.35em 0;font-size:1.05em}
+.plate .pl-sub{color:var(--dim);font-size:.8em;margin-bottom:10px}
+.plate .mbtns{justify-content:center}
+/* guide */
+.gsrc{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.gfloor{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0;background:linear-gradient(180deg,var(--card2),var(--card))}
+.gfloor h4{margin:.1em 0 .3em;color:var(--cy);letter-spacing:.05em}
+.gfloor p{color:var(--dim);font-size:.92em;margin:.25em 0}
+.gfloor .gsrcs{font-size:.85em;color:var(--txt)}
+.gnote{border:1px solid var(--am);border-radius:12px;padding:12px 16px;margin:12px 0;background:#161006;color:var(--txt);font-size:.92em}
 /* product grid */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:14px}
 .card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .12s,box-shadow .12s}
@@ -137,7 +164,9 @@ footer .wrap p{max-width:900px}
 <div class="bigmenu">
 <a class="mbtn" href="#floors">FLOORS</a>
 <a class="mbtn" href="#browse">BROWSE</a>
+<a class="mbtn" href="#entrymap">🗺 ENTRY MAP</a>
 <a class="mbtn" href="#browse" onclick="document.getElementById('q').focus()">SEARCH</a>
+<a class="mbtn" href="#mallguide">MALL MAP &amp; GUIDE</a>
 <a class="mbtn cartbtn" href="javascript:void(0)" onclick="Cart.open()">CART (<span id="cartcount">0</span>)</a>
 </div>
 <div class="hero">
@@ -148,25 +177,30 @@ footer .wrap p{max-width:900px}
 <div class="counts" id="livecounts"><span class="chip">loading inventory…</span></div>
 </div>
 <div class="wrap">
+<section class="sec" id="entrymap">
+<h2>Entry Mall Map <span class="sub">You are here — tap any store to walk in</span></h2>
+<div class="mallmap" id="entrymapsvg"></div>
+<p class="mapcap">★ red star = the main entrance · <b>YOU ARE HERE</b> · every floor and storefront draws live from the inventory index, so new departments appear on the map by themselves</p>
+</section>
 <section class="sec" id="floors">
-<h2>Mall Directory <span class="sub">Six floors · pick a department to enter</span></h2>
+<h2>Mall Directory <span class="sub" id="floorsub">pick a department to enter</span></h2>
 <div class="floors" id="floordir"></div>
 </section>
 <section class="sec" id="browse">
 <h2>Browse the Shelves <span class="sub">Search, filter, A–Z — counts come live from the inventory index</span></h2>
 <div class="toolbar">
-<input type="search" id="q" placeholder="Search 8,000+ products — name, description, record ID…" aria-label="Search products">
-<button class="fchip on" data-f="all">All floors</button>
-<button class="fchip" data-f="AI &amp; Software">AI &amp; Software</button>
-<button class="fchip" data-f="Knowledge">Knowledge</button>
-<button class="fchip" data-f="Inventions">Inventions</button>
-<button class="fchip" data-f="Compute">Compute</button>
-<button class="fchip" data-f="Tools">Tools</button>
+<input type="search" id="q" placeholder="Search products — name, description, record ID…" aria-label="Search products">
+<span id="fchips" style="display:contents"></span>
 </div>
 <div class="az" id="az"></div>
 <div class="grid" id="grid"></div>
 <div class="more" id="morewrap"><button id="morebtn" onclick="Mall.more()">Load more</button></div>
 <p id="noresults" style="display:none;color:var(--dim);text-align:center">No products match — try another search or floor.</p>
+</section>
+<section class="sec" id="mallguide">
+<h2>Mall Map &amp; Guide <span class="sub">How this website-mall works — the full tour</span></h2>
+<div class="mallmap" id="guidemapsvg"></div>
+<div id="guidebody"><p style="color:var(--dim)">Guide loading…</p></div>
 </section>
 </div>
 <div class="overlay" id="overlay" onclick="if(event.target===this)Mall.closeModal()">
@@ -236,7 +270,15 @@ function svgArt(seed,dept,wide){
   p+=`<g stroke="${col}" stroke-width="3" opacity=".9"><path d="M${m} ${m+L}V${m}H${m+L}"/><path d="M${W-m-L} ${m}H${W-m}V${m+L}"/><path d="M${m} ${H-m-L}V${H-m}H${m+L}"/><path d="M${W-m-L} ${H-m}H${W-m}V${H-m-L}"/></g>`;
   p+=`</svg>`;return p;
 }
-/* ============ mall engine ============ */
+/* ============ mall engine ============
+   GZIP LOADING: GitHub Pages serves .json.gz as Content-Type: application/gzip
+   with NO Content-Encoding, so fetch().text() returns raw gzip binary and
+   JSON.parse throws. gz() inflates via DecompressionStream first. */
+async function gz(url){
+  const r=await fetch(url);
+  if(!r.ok)throw new Error("HTTP "+r.status+" "+url);
+  return await new Response(r.body.pipeThrough(new DecompressionStream("gzip"))).text();
+}
 const Mall={
   manifest:null, idx:null, deptCache:{}, shown:0, pageSize:60,
   curDept:"all", curLetter:"", curQuery:"",
@@ -244,8 +286,9 @@ const Mall={
   esc:s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),
   async boot(){
     try{this.manifest=await(await fetch("data/products/manifest.json")).json()}catch(e){}
-    this.renderCounts();this.renderFloors();this.renderAZ();
+    this.renderCounts();this.renderChips();this.renderEntryMap();this.renderFloors();this.renderAZ();
     this.bindUI();
+    this.renderGuide();
     const pid=new URLSearchParams(location.search).get("product");
     if(pid){this.openProduct(pid)}else{this.enterDept("all")}
   },
@@ -256,9 +299,11 @@ const Mall={
     el.innerHTML=`<span class="chip">Products on shelf: <b>${total}</b></span>`+
       m.depts.filter(d=>m.by_dept[d]>0).map(d=>`<span class="chip">${this.esc(d)}: <b>${m.by_dept[d].toLocaleString()}</b></span>`).join("")+
       `<span class="chip">Grand-opening price: <b>$0.00</b> everything</span>`;
+    document.getElementById("q").placeholder=`Search ${total} products — name, description, record ID…`;
   },
   renderFloors(){
     const m=this.manifest,el=document.getElementById("floordir");
+    document.getElementById("floorsub").textContent=m.depts.length+" floors · pick a department to enter";
     const desc={"AI & Software":"Talkable AIs, system minds and domain assistants from the Telephone Book.",
       "Knowledge":"Dictionary words and LLM terms from the Dictionary and Signature Llama.",
       "Inventions":"Draft specs and real public patents from the Spec Catalog and Patent Catalog.",
@@ -273,6 +318,174 @@ const Mall={
       ${soon?`<div class="enter" style="border-color:#555;color:#888">OPENING SOON</div>`:`<div class="enter">ENTER FLOOR →</div>`}</div>`;
     }).join("");
   },
+  /* ============ 80s/90s mall experience: entry map, guide, locations, personalization ============ */
+  // filter chips drawn from the manifest (no hardcoded department list)
+  renderChips(){
+    const m=this.manifest,el=document.getElementById("fchips");
+    const mk=(label,f,off)=>`<button class="fchip${label==="all"?" on":""}${off?" off":""}" data-f="${this.esc(f)}"${off?' disabled title="Opening soon"':""}>${this.esc(label)}${off?" · soon":""}</button>`;
+    el.innerHTML=m?mk("all","all",false)+m.depts.map(d=>mk(d,d,(m.by_dept[d]||0)===0)).join(""):mk("all","all",false);
+    el.querySelectorAll("button.fchip").forEach(c=>c.onclick=()=>{
+      if(c.disabled||c.classList.contains("off"))return;
+      el.querySelectorAll("button").forEach(x=>x.classList.remove("on"));c.classList.add("on");
+      this.enterDept(c.dataset.f);
+    });
+  },
+  // deterministic mall location for a product: floor = dept index+1, aisle = hash of product id
+  mallLoc(pid,dept){
+    const m=this.manifest,fi=m&&m.depts?m.depts.indexOf(dept):-1;
+    const h=xmur3(String(pid))();
+    return {dept,floor:fi>=0?fi+1:"?",aisle:"ABCDEF"[h%6]+"-"+String(((h>>>4)%20)+1).padStart(2,"0")};
+  },
+  starPts(cx,cy,r){
+    let p=[];for(let k=0;k<10;k++){const a=-Math.PI/2+k*Math.PI/5,rr=k%2?r*.42:r;
+      p.push((cx+rr*Math.cos(a)).toFixed(1)+","+(cy+rr*Math.sin(a)).toFixed(1))}return p.join(" ");
+  },
+  // the SVG mall directory map — every floor/store/count comes from the manifest
+  mapSVG(big){
+    const m=this.manifest;
+    if(!m||!m.depts||!m.depts.length)return '<p style="color:var(--dim)">Mall map loading…</p>';
+    const W=big?920:680,pad=14,titleH=big?70:56,floorH=big?122:96,gap=10;
+    const n=m.depts.length,entH=big?100:78,legH=big?64:0;
+    const H=titleH+n*(floorH+gap)+gap+entH+legH+pad;
+    const SUF=["MART","HUB","DEPOT","OUTLET","WORKS","PLAZA","LOFT","BARN"];
+    const HUES=[186,320,265,38,140,315,48,210,190,280];
+    let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Signature Cyber Mega-Mall directory map">`;
+    s+=`<rect width="${W}" height="${H}" fill="#04060d"/>`;
+    for(let gx=0;gx<W;gx+=44)s+=`<line x1="${gx}" y1="0" x2="${gx}" y2="${H}" stroke="#00f0ff" stroke-width="1" opacity=".05"/>`;
+    for(let gy=0;gy<H;gy+=44)s+=`<line x1="0" y1="${gy}" x2="${W}" y2="${gy}" stroke="#00f0ff" stroke-width="1" opacity=".05"/>`;
+    s+=`<text x="${W/2}" y="30" text-anchor="middle" fill="#00f0ff" font-size="${big?26:20}" font-weight="800" letter-spacing="4">MALL DIRECTORY</text>`;
+    s+=`<text x="${W/2}" y="50" text-anchor="middle" fill="#8b98b8" font-size="11" letter-spacing="2">GRAND OPENING · EVERYTHING $0.00 · TAP A STOREFRONT TO WALK IN</text>`;
+    m.depts.forEach((d,i)=>{
+      const y=titleH+i*(floorH+gap),c=m.by_dept[d]||0,soon=c===0,hue=HUES[i%HUES.length],fn="F"+(i+1);
+      const col=`hsl(${hue},100%,60%)`;
+      s+=`<rect x="${pad}" y="${y}" width="${W-2*pad}" height="${floorH}" rx="10" fill="#0b1126" stroke="${soon?"#3a4666":col}" stroke-width="${soon?1.5:2.5}"${soon?' stroke-dasharray="9 7"':""} opacity="${soon?.8:1}"/>`;
+      s+=`<text x="${pad+18}" y="${y+36}" fill="${soon?"#66708c":col}" font-size="26" font-weight="800">${fn}</text>`;
+      s+=`<text x="${pad+18}" y="${y+62}" fill="#d7e3ff" font-size="${big?18:15}" font-weight="700">${this.esc(d)}</text>`;
+      s+=`<text x="${pad+18}" y="${y+(big?88:82)}" fill="#8b98b8" font-size="11">${soon?"COMING SOON":c.toLocaleString()+" products"}</text>`;
+      if(!soon){
+        const k=Math.min(8,Math.max(2,Math.ceil(c/600)));
+        const x0=pad+(big?250:225),avail=W-2*pad-(x0-pad)-14;
+        const bw=(avail-(k-1)*6)/k,bh=floorH-30,by=y+15;
+        const word=d.split(/[\s&]+/).filter(Boolean)[0].toUpperCase();
+        const base=xmur3(d)();
+        for(let j=0;j<k;j++){
+          const bx=x0+j*(bw+6);
+          const scol=j%2?`hsl(${(hue+140)%360},100%,62%)`:`hsl(${(hue+60)%360},100%,62%)`;
+          const sname=word+" "+SUF[(base+j)%SUF.length];
+          s+=`<g class="store" onclick="Mall.enterDept('${this.esc(d)}')"><title>${this.esc(d)} — enter floor ${fn}</title>`;
+          s+=`<rect x="${bx.toFixed(1)}" y="${by}" width="${bw.toFixed(1)}" height="${bh}" rx="6" fill="#0d1430" stroke="${scol}" stroke-width="1.6"/>`;
+          s+=`<text x="${(bx+bw/2).toFixed(1)}" y="${(by+bh/2-2).toFixed(1)}" text-anchor="middle" fill="#ffffff" font-size="${big?11:9.5}" font-weight="700" textLength="${Math.max(10,bw-12).toFixed(0)}" lengthAdjust="spacingAndGlyphs">${this.esc(sname)}</text>`;
+          s+=`<text x="${(bx+bw/2).toFixed(1)}" y="${(by+bh/2+14).toFixed(1)}" text-anchor="middle" fill="${scol}" font-size="8.5" letter-spacing="2">● OPEN</text></g>`;
+        }
+      }
+    });
+    // main entrance + YOU ARE HERE
+    const ey=titleH+n*(floorH+gap)+gap;
+    s+=`<rect x="${pad}" y="${ey}" width="${W-2*pad}" height="${entH}" rx="10" fill="#140b06" stroke="#ffcf4d" stroke-width="2" stroke-dasharray="10 6"/>`;
+    const scx=pad+64,scy=ey+entH/2,sr=big?24:19;
+    s+=`<polygon points="${this.starPts(scx,scy,sr+7)}" fill="#ff3b3b" opacity=".25"/>`;
+    s+=`<polygon points="${this.starPts(scx,scy,sr)}" fill="#ff3b3b"/>`;
+    s+=`<text x="${scx+sr+22}" y="${scy-2}" fill="#ff3b3b" font-size="${big?22:17}" font-weight="800" letter-spacing="2">★ YOU ARE HERE</text>`;
+    s+=`<text x="${scx+sr+22}" y="${scy+(big?24:19)}" fill="#ffcf4d" font-size="11" letter-spacing="3">MAIN ENTRANCE · ALL FLOORS ABOVE</text>`;
+    if(big){
+      const ly=ey+entH+14;
+      s+=`<text x="${pad+6}" y="${ly+16}" fill="#8b98b8" font-size="11" letter-spacing="2">MAP KEY:</text>`;
+      s+=`<rect x="${pad+110}" y="${ly+2}" width="26" height="16" rx="3" fill="#0d1430" stroke="#ff2fb3" stroke-width="1.6"/><text x="${pad+144}" y="${ly+15}" fill="#d7e3ff" font-size="11">storefront — tap to enter</text>`;
+      s+=`<polygon points="${this.starPts(pad+330,ly+10,9)}" fill="#ff3b3b"/><text x="${pad+346}" y="${ly+15}" fill="#d7e3ff" font-size="11">you are here</text>`;
+      s+=`<rect x="${pad+470}" y="${ly+2}" width="26" height="16" rx="3" fill="#0b1126" stroke="#3a4666" stroke-width="1.5" stroke-dasharray="5 4"/><text x="${pad+504}" y="${ly+15}" fill="#d7e3ff" font-size="11">coming soon</text>`;
+    }
+    s+=`</svg>`;return s;
+  },
+  renderEntryMap(){
+    document.getElementById("entrymapsvg").innerHTML=this.mapSVG(false);
+  },
+  async ensureIdx(){
+    if(!this.idx){try{this.idx=JSON.parse(await gz("data/products/index.json.gz"))}catch(e){this.idx=[]}}
+    return this.idx;
+  },
+  deptSources(){
+    const out={};
+    if(!this.idx||!this.idx.length||!this.manifest)return out;
+    this.manifest.depts.forEach(d=>{
+      const cnt={};
+      this.idx.forEach(p=>{if(p.d===d)cnt[p.s]=(cnt[p.s]||0)+1});
+      out[d]=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,3);
+    });
+    return out;
+  },
+  async renderGuide(){
+    const m=this.manifest,body=document.getElementById("guidebody");
+    if(!m){body.innerHTML='<p style="color:var(--dim)">Guide offline — inventory index not loaded.</p>';return}
+    await this.ensureIdx();
+    document.getElementById("guidemapsvg").innerHTML=this.mapSVG(true);
+    const ds=this.deptSources();
+    let h=`<div class="gnote">🗺 <b>Welcome to the mall.</b> This whole website is laid out like a 1980s–90s shopping mall: you came in the <b style="color:#ff3b3b">main entrance ★ (YOU ARE HERE)</b>, and every floor above is a department full of storefronts. Tap any store on the map to walk in. Everything costs <b>$0.00</b> — grand opening, take it all.</div>`;
+    h+=`<h3 style="color:var(--cy);letter-spacing:.1em;margin:18px 0 6px">THE FLOORS</h3>`;
+    h+=m.depts.map((d,i)=>{
+      const c=m.by_dept[d]||0,soon=c===0;
+      const srcs=(ds[d]||[]).map(([sn,nn])=>`${this.esc(sn)} (${nn.toLocaleString()})`).join(" · ");
+      return `<div class="gfloor"><h4>F${i+1} · ${this.esc(d)}${soon?' — <span style="color:var(--am)">COMING SOON</span>':""}</h4>`
+      +`<p><b style="color:var(--cy)">${c.toLocaleString()}</b> product${c===1?"":"s"} on the shelf${soon?" — shelves still being stocked":""}</p>`
+      +(srcs?`<p class="gsrcs">Stocked from: ${srcs}</p>`:"")
+      +(soon?"":`<p><a href="javascript:void(0)" onclick="Mall.enterDept('${this.esc(d)}')" style="color:var(--cy)">Enter this floor →</a></p>`)+`</div>`;
+    }).join("");
+    h+=`<h3 style="color:var(--cy);letter-spacing:.1em;margin:18px 0 6px">WHERE THE PRODUCTS COME FROM</h3>`;
+    h+=`<div class="gsrc">`+Object.entries(m.by_src||{}).map(([sn,nn])=>`<span class="chip">${this.esc(sn)}: <b>${Number(nn).toLocaleString()}</b></span>`).join("")+`</div>`;
+    h+=`<p style="color:var(--dim);font-size:.92em">Every product is a real record from one of the JAH Network sites above, deep-linked to its live source page. <b>original</b> = made by Justin Addam Higgins / the Signature system · <b>generated</b> = produced by his deterministic generators · <b>external</b> = real public records harvested from public sources. Draft specs are marked Draft — ready to file, NOT filed, NOT granted patents.</p>`;
+    h+=`<h3 style="color:var(--cy);letter-spacing:.1em;margin:18px 0 6px">CHECKOUT &amp; PRICES</h3>`;
+    h+=`<div class="gnote">⛔ <b>CHECKOUT IS INACTIVE</b> — every price in the mall is <b>$0.00</b> during the grand opening, and the credit-card payment hooks are held until the site goes active. Nothing can be purchased right now; fill the cart for fun.</div>`;
+    h+=`<p style="color:var(--dim);font-size:.88em">Any single product can be reached from anywhere with a deep link: <span style="color:#9fc2ff">?product=JAH-MALL-000001</span> · Machine-readable: <a href="products.json" style="color:#9fc2ff">products.json</a> · <a href="sitemap.xml" style="color:#9fc2ff">sitemap.xml</a></p>`;
+    body.innerHTML=h;
+  },
+  /* ---- "Make it yours" personalization ---- */
+  custStore(){try{return JSON.parse(localStorage.getItem("mallcustom")||"{}")}catch(e){return{}}},
+  custSave(pid,name,cid){try{const o=this.custStore();o[pid]={name,cid};localStorage.setItem("mallcustom",JSON.stringify(o))}catch(e){}},
+  plateText(pid,name,cid,loc,prodName){
+    return ["========================================",
+    " SIGNATURE CYBER MEGA-MALL — PERSONALIZED PLATE",
+    "========================================",
+    " Product   : "+prodName+" ("+pid+")",
+    " Made for  : "+name,
+    " Custom ID : "+cid,
+    " Location  : "+loc.dept+" · Floor F"+loc.floor+" · Aisle "+loc.aisle,
+    " Price     : $0.00 (grand opening)",
+    "========================================"].join("\n");
+  },
+  personalize(pid){
+    const inp=document.getElementById("custname"),name=(inp.value||"").trim();
+    if(!name){inp.focus();inp.placeholder="Type your name first…";return}
+    // deterministic custom ID: same product + same name always mints the same ID
+    const cid="JAH-MALL-CUSTOM-"+String(xmur3(pid+"|"+name.toLowerCase())()%900000+100000);
+    this.custSave(pid,name,cid);
+    this.paintPlate(pid);
+  },
+  paintPlate(pid){
+    const o=this.custStore()[pid],box=document.getElementById("custplate");
+    if(!box)return;
+    if(!o){box.innerHTML="";return}
+    const p=(this.idx||[]).find(x=>x.id===pid)||{};
+    const loc=this.mallLoc(pid,p.d||p.dept||"");
+    const txt=this.plateText(pid,o.name,o.cid,loc,p.n||p.name||pid);
+    box.innerHTML=`<div class="plate"><div class="pl-title">✨ MADE FOR <b>${this.esc(o.name)}</b> ✨</div>`
+    +`<div class="pl-id">${o.cid}</div>`
+    +`<div class="pl-sub">${this.esc(p.n||p.name||"")} · ${this.esc(pid)} · Floor F${loc.floor} · Aisle ${loc.aisle}</div>`
+    +`<div class="mbtns"><button class="btn go" onclick="Mall.copyPlate('${this.esc(pid)}')">COPY PLATE</button>`
+    +`<button class="btn aud" onclick="Mall.dlPlate('${this.esc(pid)}')">DOWNLOAD .TXT</button></div></div>`;
+    box._txt=txt;
+  },
+  copyPlate(pid){
+    const t=(document.getElementById("custplate")||{})._txt||"";
+    if(navigator.clipboard&&navigator.clipboard.writeText)
+      navigator.clipboard.writeText(t).then(()=>audMsg("Personalized plate copied."),()=>audMsg("Copy was blocked — long-press the plate to copy it manually."));
+    else audMsg("Copy is not available in this browser.");
+  },
+  dlPlate(pid){
+    const t=(document.getElementById("custplate")||{})._txt||"";
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(new Blob([t],{type:"text/plain"}));
+    a.download=pid+"-personalized.txt";document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},600);
+  },
   renderAZ(){
     const el=document.getElementById("az");
     el.innerHTML=`<button class="on" data-l="">#</button>`+"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(l=>`<button data-l="${l}">${l}</button>`).join("");
@@ -281,10 +494,6 @@ const Mall={
   bindUI(){
     const q=document.getElementById("q");let t;
     q.addEventListener("input",()=>{clearTimeout(t);t=setTimeout(()=>{this.curQuery=q.value.trim();this.search(true)},220)});
-    document.querySelectorAll(".fchip").forEach(c=>c.onclick=()=>{
-      document.querySelectorAll(".fchip").forEach(x=>x.classList.remove("on"));c.classList.add("on");
-      this.enterDept(c.dataset.f.replace("&amp;","&"));
-    });
     document.addEventListener("keydown",e=>{if(e.key==="Escape"){this.closeModal();Cart.close()}});
   },
   async deptProducts(dept){
@@ -297,7 +506,7 @@ const Mall={
     for(const d of depts){
       const chunks=Math.ceil((m.by_dept[d]||0)/m.per_chunk);
       for(let c=0;c<chunks;c++){
-        try{const r=await(await fetch(`data/products/by-dept/${this.slug(d)}-c${String(c).padStart(5,"0")}.json.gz`)).text();
+        try{const r=await gz(`data/products/by-dept/${this.slug(d)}-c${String(c).padStart(5,"0")}.json.gz`);
           out.push(...r.trim().split("\n").filter(Boolean).map(JSON.parse));}catch(e){}
       }
     }
@@ -314,7 +523,7 @@ const Mall={
   async search(reset){
     if(reset){this.shown=0;document.getElementById("grid").innerHTML="";document.getElementById("morewrap").style.display=""}
     if(!this.idx){
-      try{const r=await(await fetch("data/products/index.json.gz")).text();this.idx=JSON.parse(r)}catch(e){this.idx=[]}
+      try{this.idx=JSON.parse(await gz("data/products/index.json.gz"))}catch(e){this.idx=[]}
     }
     const q=this.curQuery.toLowerCase(),L=this.curLetter.toUpperCase(),D=this.curDept;
     this.grid=this.idx.filter(p=>
@@ -344,15 +553,18 @@ const Mall={
     document.getElementById("morewrap").style.display=this.shown>=this.grid.length?"none":"";
   },
   async openProduct(pid){
-    if(!this.idx){try{const r=await(await fetch("data/products/index.json.gz")).text();this.idx=JSON.parse(r)}catch(e){}}
+    if(!this.idx){try{this.idx=JSON.parse(await gz("data/products/index.json.gz"))}catch(e){}}
     const p=(this.idx||[]).find(x=>x.id===pid);
     if(!p){return}
     const full={id:p.id,name:p.n,dept:p.d,src:p.s,stype:p.t,sid:p.g,url:p.u,blurb:p.b,seed:p.g};
+    const loc=this.mallLoc(full.id,full.dept);
+    const saved=this.custStore()[full.id];
     document.getElementById("mart").innerHTML=svgArt(full.seed,full.dept,true);
     document.getElementById("mbody").innerHTML=`
     <button class="close" onclick="Mall.closeModal()">✕ CLOSE</button>
     <div class="sku">${full.id}</div><h3>${this.esc(full.name)}</h3>
     <div class="meta"><span class="stype ${full.stype}">${full.stype}</span><span style="color:var(--dim);font-size:.85em">${this.esc(full.src)}</span></div>
+    <div class="youarehere"><span class="yah-star">★</span>YOU ARE HERE — in mall: <b>${this.esc(full.dept)}</b> · Floor <b>F${loc.floor}</b> · Aisle <b>${loc.aisle}</b></div>
     <p class="blurb">${this.esc(full.blurb)||"No description — open the source record for the full file."}</p>
     <dl class="kv">
     <dt>Department</dt><dd>${this.esc(full.dept)}</dd>
@@ -366,9 +578,16 @@ const Mall={
     <button class="btn cart" onclick='Cart.add(${JSON.stringify(full.id)})'>ADD TO CART</button>
     <button class="btn off" disabled title="Checkout is inactive until the site goes active">BUY — DISABLED</button>
     </div>
+    <div class="custom">
+    <h4>✨ MAKE IT YOURS</h4>
+    <p>Put your name on it — the mall mints a one-of-a-kind personalized plate for this product, saved on this device.</p>
+    <div class="crow"><input id="custname" maxlength="40" placeholder="Your name…" aria-label="Your name" value="${saved?this.esc(saved.name):""}"><button class="btn go" onclick="Mall.personalize('${this.esc(full.id)}')">PERSONALIZE</button></div>
+    <div id="custplate"></div>
+    </div>
     <p style="font-size:.78em;color:var(--dim);margin-top:12px">Deep link: <span style="color:#9fc2ff">?product=${full.id}</span> · share it anywhere.</p>`;
     document.getElementById("overlay").classList.add("open");
     history.replaceState(null,"","?product="+full.id);
+    this.paintPlate(full.id);
   },
   closeModal(){document.getElementById("overlay").classList.remove("open");history.replaceState(null,"",location.pathname)}
 };
@@ -516,7 +735,7 @@ const Cart={
     document.getElementById("cartcount").textContent=this.items.length;
     const box=document.getElementById("cartitems");
     if(!this.items.length){box.innerHTML="<p style='color:var(--dim)'>Cart is empty — everything is $0.00, so fill it up.</p>";return}
-    if(!Mall.idx){try{Mall.idx=JSON.parse(await(await fetch("data/products/index.json.gz")).text())}catch(e){}}
+    if(!Mall.idx){try{Mall.idx=JSON.parse(await gz("data/products/index.json.gz"))}catch(e){}}
     box.innerHTML=this.items.map(id=>{
       const p=(Mall.idx||[]).find(x=>x.id===id);if(!p)return"";
       return `<div class="citem">${svgArt(p.g,p.d)}<div class="nm"><b>${Mall.esc(p.n)}</b><br><span style="color:var(--dim);font-size:.78em">${p.id} · $0.00</span></div><button class="rm" onclick="Cart.remove('${id}')">✕</button></div>`;
