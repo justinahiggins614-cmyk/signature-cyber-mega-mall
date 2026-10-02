@@ -61,6 +61,36 @@ background-size:44px 44px}
 .az{display:flex;flex-wrap:wrap;gap:4px;margin:10px 0}
 .az button{background:none;border:1px solid var(--line);color:var(--dim);border-radius:6px;min-width:32px;padding:5px 6px;cursor:pointer;font-size:.85em}
 .az button.on{background:var(--cy);color:#03131a;font-weight:800;border-color:var(--cy)}
+/* finder host — mall concierge chat strip */
+.finder{margin:14px 0 6px;border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:linear-gradient(180deg,#0a1226,#060b1c)}
+.fhead{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.fhead .fhost{font-size:1.6em;filter:drop-shadow(0 0 8px #00f0ff)}
+.fhead b{color:var(--cy);letter-spacing:.14em;font-size:1em;display:block}
+.fhead span{color:var(--dim);font-size:.82em}
+.flog{max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.flog:empty{display:none}
+.fmsg{max-width:92%;padding:9px 13px;border-radius:12px;font-size:.9em;line-height:1.5}
+.fmsg.you{align-self:flex-end;background:#0e2a44;border:1px solid var(--cy);color:var(--txt);border-bottom-right-radius:3px}
+.fmsg.host{align-self:flex-start;background:#141024;border:1px solid var(--mg);color:var(--txt);border-bottom-left-radius:3px}
+.fmsg.host b{color:var(--mg)}
+.frow{display:flex;gap:8px}
+.frow input{flex:1;min-width:120px;padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:#060b1c;color:var(--txt);font-size:1em}
+.frow input:focus{outline:none;border-color:var(--mg);box-shadow:0 0 12px #b366ff44}
+.fchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.fcard{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:8px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#0a1428}
+.fcard .fnm{font-size:.88em}
+.fcard .fnm span{color:var(--dim);font-size:.82em}
+.fcard .btn{white-space:nowrap;font-size:.82em;padding:8px 12px}
+/* host bubble inside the product modal */
+.hostbubble{margin:14px 0;border:1px solid var(--mg);border-radius:12px;padding:12px 14px;background:#100b1e}
+.hrow{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.hrow .fhost{font-size:1.5em;filter:drop-shadow(0 0 8px #b366ff)}
+.hrow b{color:var(--mg);letter-spacing:.12em;font-size:.92em;display:block}
+.hrow span{color:var(--dim);font-size:.8em}
+.hbtns{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.hlog{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.hlog:empty{display:none}
+.hlog .fmsg{font-size:.85em}
 /* mall map + guide */
 .mallmap{margin-top:14px}
 .mallmap svg{width:100%;height:auto;display:block;background:#04060d;border:1px solid var(--line);border-radius:14px}
@@ -194,6 +224,12 @@ footer .wrap p{max-width:900px}
 <input type="search" id="q" placeholder="Search products — name, description, record ID…" aria-label="Search products">
 <span id="fchips" style="display:contents"></span>
 </div>
+<div class="finder" id="finder">
+<div class="fhead"><span class="fhost">🛎</span><div><b>FINDER HOST</b><span>your mall concierge — describe what you're looking for in plain words</span></div></div>
+<div class="flog" id="flog" aria-live="polite"></div>
+<div class="frow"><input id="fq" maxlength="140" placeholder="Describe what you're looking for…" aria-label="Ask the finder host"><button class="btn go" onclick="Finder.ask()">ASK</button></div>
+<div class="fchips" id="fchips"></div>
+</div>
 <div class="az" id="az"></div>
 <div class="grid" id="grid"></div>
 <div class="more" id="morewrap"><button id="morebtn" onclick="Mall.more()">Load more</button></div>
@@ -295,6 +331,7 @@ const Mall={
     this.renderCounts();this.renderChips();this.renderEntryMap();this.renderFloors();this.renderAZ();
     this.bindUI();
     this.renderGuide();
+    Finder.greet();
     const pid=new URLSearchParams(location.search).get("product");
     if(pid){this.openProduct(pid)}else{this.enterDept("all")}
   },
@@ -571,6 +608,16 @@ const Mall={
     <div class="sku">${full.id}</div><h3>${this.esc(full.name)}</h3>
     <div class="meta"><span class="stype ${full.stype}">${full.stype}</span><span style="color:var(--dim);font-size:.85em">${this.esc(full.src)}</span></div>
     <div class="youarehere"><span class="yah-star">★</span>YOU ARE HERE — in mall: <b>${this.esc(full.dept)}</b> · Floor <b>F${loc.floor}</b> · Aisle <b>${loc.aisle}</b></div>
+    <div class="hostbubble">
+    <div class="hrow"><span class="fhost">🛎</span><div><b>FINDER HOST</b><span>Need help with this one? Ask me anything about it — I follow you anywhere in the mall.</span></div></div>
+    <div class="hbtns">
+    <button class="fchip" onclick="Finder.quick('where')">📍 Where is it?</button>
+    <button class="fchip" onclick="Finder.quick('what')">📝 What is it?</button>
+    <button class="fchip" onclick="Finder.quick('price')">💲 What's the price?</button>
+    </div>
+    <div class="hlog" id="hlog" aria-live="polite"></div>
+    <div class="frow"><input id="hq" maxlength="140" placeholder="Ask about this product…" aria-label="Ask the finder host about this product"><button class="btn go" onclick="Finder.hostAsk()">ASK</button></div>
+    </div>
     <p class="blurb">${this.esc(full.blurb)||"No description — open the source record for the full file."}</p>
     <dl class="kv">
     <dt>Department</dt><dd>${this.esc(full.dept)}</dd>
@@ -593,6 +640,9 @@ const Mall={
     <p style="font-size:.78em;color:var(--dim);margin-top:12px">Deep link: <span style="color:#9fc2ff">?product=${full.id}</span> · share it anywhere.</p>`;
     document.getElementById("overlay").classList.add("open");
     history.replaceState(null,"","?product="+full.id);
+    Finder.cur={full:full,loc:loc};
+    const hq=document.getElementById("hq");
+    if(hq)hq.addEventListener("keydown",e=>{if(e.key==="Enter")Finder.hostAsk()});
     mHead(full.name+" — Signature Cyber Mega-Mall",(full.blurb||full.name+" — $0.00 at the Signature Cyber Mega-Mall"),"https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/?product="+full.id);
     this.paintPlate(full.id);
   },
@@ -698,6 +748,98 @@ function auStop(){
   try{if(window.speechSynthesis)window.speechSynthesis.cancel()}catch(e){}
   auShowBar(false);
 }
+/* ============ Finder Host — the mall's customer-service concierge ============
+   Deterministic, offline-capable: keyword extraction + the local product index
+   only. No backend calls. Works anywhere the page works. */
+const Finder={
+  cur:null, // {full, loc} for the currently open product modal
+  STOP:new Set(("the,a,an,and,or,for,to,of,in,on,with,is,it,this,that,me,my,i,you,your,we,our,do,does,want,need,needs,looking,look,find,finds,get,something,anything,some,any,please,like,just,really,very,would,could,should,can,will,have,has,are,be,was,were,at,by,from,as,so,but,if,not,no,yes,up,out,about,into,over,after,than,then,there,their,them,they,he,she,his,her,its,s,don,t,ll,re,ve,am,an,here,more,most,other,our,ours,same,such,only,own,too,when,where,which,who,whom,why,how,all,any,both,each,few,show,tell,give,kind,thing,things,stuff,maybe,perhaps").split(",")),
+  keywords(text){
+    return String(text||"").toLowerCase().replace(/[^a-z0-9 ]/g," ").split(/\s+/)
+      .filter(w=>w.length>=3&&!this.STOP.has(w));
+  },
+  score(p,kws){
+    const name=(p.n||"").toLowerCase(),blurb=(p.b||"").toLowerCase(),
+          dept=(p.d||"").toLowerCase(),src=(p.s||"").toLowerCase(),id=(p.id||"").toLowerCase();
+    let s=0;
+    for(const k of kws){
+      if(id===k)s+=8;else if(id.includes(k))s+=6;
+      if(name.includes(k))s+=3;
+      if(blurb.includes(k))s+=2;
+      if(dept.includes(k))s+=1.5;
+      if(src.includes(k))s+=1;
+    }
+    return s;
+  },
+  esc:s=>Mall.esc(s),
+  fsay(html,who){
+    const log=document.getElementById("flog");
+    const d=document.createElement("div");d.className="fmsg "+who;d.innerHTML=html;
+    log.appendChild(d);log.scrollTop=log.scrollHeight;
+  },
+  hsay(html,who){
+    const log=document.getElementById("hlog");if(!log)return;
+    const d=document.createElement("div");d.className="fmsg "+who;d.innerHTML=html;
+    log.appendChild(d);log.scrollTop=log.scrollHeight;
+  },
+  greet(){
+    this.fsay("Hi there! I'm your <b>finder host</b> — this mall has thousands of products, so just describe what you're looking for in plain words and I'll walk you to the right shelf. 🛎","host");
+    const chips=["a gift for a kid","something to learn","computer gear","kitchen helper","funny present"];
+    document.getElementById("fchips").innerHTML=chips.map(c=>
+      `<button class="fchip" onclick="Finder.chip(${JSON.stringify(c)})">${this.esc(c)}</button>`).join("");
+    const fq=document.getElementById("fq");
+    fq.addEventListener("keydown",e=>{if(e.key==="Enter")this.ask()});
+  },
+  chip(c){document.getElementById("fq").value=c;this.ask()},
+  async ensureIdx(){
+    if(!Mall.idx){try{Mall.idx=JSON.parse(await gz("data/products/index.json.gz"))}catch(e){Mall.idx=[]}}
+    return Mall.idx||[];
+  },
+  async ask(){
+    const inp=document.getElementById("fq"),q=inp.value.trim();
+    if(!q)return;
+    this.fsay(this.esc(q),"you");
+    const kws=this.keywords(q);
+    if(!kws.length){this.fsay("Give me one more word to go on — a thing, a hobby, a person you're shopping for… 🛎","host");return}
+    const idx=await this.ensureIdx();
+    if(!idx.length){this.fsay("The inventory is offline right now — I can't browse the shelves. Please try again in a moment. 🛎","host");return}
+    const scored=idx.map(p=>({p,s:this.score(p,kws)})).filter(r=>r.s>0)
+      .sort((a,b)=>b.s-a.s||(a.p.id<b.p.id?-1:1)).slice(0,5);
+    if(!scored.length){
+      const depts=(Mall.manifest&&Mall.manifest.depts||[]).filter(d=>(Mall.manifest.by_dept||{})[d]>0).slice(0,3);
+      this.fsay(`Hmm, nothing on the shelves matches <b>${this.esc(kws.join(" "))}</b>. Try different words — or take the escalator to <b>${depts.map(d=>this.esc(d)).join("</b>, <b>")}</b> and browse the floors. 🛎`,"host");
+      return;
+    }
+    const cards=scored.map(r=>
+      `<div class="fcard"><div class="fnm"><b>${this.esc(r.p.n)}</b><br><span>${r.p.id} · ${this.esc(r.p.d)} · $0.00</span></div>`+
+      `<button class="btn go" onclick="Mall.openProduct('${r.p.id}')">Take me there →</button></div>`).join("");
+    this.fsay(`Found <b>${scored.length}</b> for you — top pick first: 🛎${cards}`,"host");
+  },
+  // ---- follows you into the product modal: quick answers, data-grounded ----
+  quick(kind){
+    const c=this.cur;if(!c)return;
+    const f=c.full,l=c.loc,E=this.esc.bind(this);
+    if(kind==="where")this.hsay(`Right here! You're looking at it: <b>${E(f.dept)}</b> · Floor <b>F${l.floor}</b> · Aisle <b>${E(l.aisle)}</b>. 📍`,"host");
+    else if(kind==="what")this.hsay(`<b>${E(f.name)}</b>. ${E(f.blurb)||"No description on file — open the source record for the full file."} <span style="color:var(--dim)">Type: ${E(f.stype)}.</span>`,"host");
+    else if(kind==="price")this.hsay(`It's <b>$0.00</b> — grand opening, everything in the mall is free right now. 💲`,"host");
+  },
+  async hostAsk(){
+    const inp=document.getElementById("hq"),q=inp.value.trim(),c=this.cur;
+    if(!q||!c)return;
+    this.hsay(this.esc(q),"you");inp.value="";
+    const t=q.toLowerCase(),f=c.full,l=c.loc,E=this.esc.bind(this);
+    let a;
+    if(/price|cost|how much|free|\$/.test(t))a=`It's <b>$0.00</b> — grand opening, everything in the mall is free right now.`;
+    else if(/where|location|aisle|floor|shelf|locate|find it|find this/.test(t))a=`You're looking at it: <b>${E(f.dept)}</b> · Floor <b>F${l.floor}</b> · Aisle <b>${E(l.aisle)}</b>.`;
+    else if(/what is|what's|describe|description|about this|about it|info/.test(t))a=`<b>${E(f.name)}</b>. ${E(f.blurb)||"No description on file — open the source record for the full file."}`;
+    else if(/source|record|where.*from|who made|made by|original/.test(t))a=`Source: <b>${E(f.src)}</b> · record <b>${E(f.sid)}</b> · type <b>${E(f.stype)}</b>.`;
+    else if(/\bid\b|sku|product id|product number/.test(t))a=`Product ID: <b>${E(f.id)}</b>.`;
+    else if(/department|dept/.test(t))a=`It lives in the <b>${E(f.dept)}</b> department, Floor <b>F${l.floor}</b>.`;
+    else if(/buy|checkout|pay|purchase|order|cart/.test(t))a=`Checkout is inactive — credit-card payments are held until the site goes active. For now, everything is $0.00.`;
+    else a=`I can only answer from this product's page — try asking about its <b>price</b>, <b>location</b>, <b>department</b>, <b>source record</b>, or <b>ID</b>.`;
+    this.hsay(a,"host");
+  }
+};
 /* ---- per-product read-aloud facade for the mall ---- */
 const Aud={
   clean(t){return String(t||"").replace(/<[^>]*>/g," ").replace(/[`{}|\\]/g,"")
