@@ -1,0 +1,29 @@
+{
+ "site": "Signature Cyber Mega-Mall",
+ "site_url": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/",
+ "creator": "Justin Addam Higgins",
+ "description": "Universal storefront layer over the JAH Network. Every product deep-links to its live source record. Grand opening: everything $0.00. Checkout inactive.",
+ "for_bots": true,
+ "product_count": 8821,
+ "departments": {
+  "AI & Software": 260,
+  "Knowledge": 2316,
+  "Inventions": 4504,
+  "Compute": 121,
+  "Tools": 1620,
+  "Books & Courses": 0
+ },
+ "sources": {
+  "Signature Spec Catalog": 3004,
+  "Globally Rejustered Patent Catalog": 1500,
+  "The Signature AI Telephone Book": 260,
+  "Signature Universal Paradox Immune Calculator": 1500,
+  "The Signature Dictionary": 2004,
+  "The Signature PC System Depository": 121,
+  "Signature Llama": 432
+ },
+ "index": "data/products/index.json.gz",
+ "products_json": "products.json",
+ "deep_link_pattern": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/?product=JAH-MALL-######",
+ "checkout": "INACTIVE \u2014 credit-card support held until the site goes active"
+}

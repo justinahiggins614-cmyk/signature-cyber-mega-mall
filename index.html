@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Signature Cyber Mega-Mall — Grand Opening · Everything $0.00</title>
+<meta name="description" content="The Signature Cyber Mega-Mall: the universal storefront layer over the JAH Network. AI, software, knowledge, inventions, compute and tools — every product deep-links to its live source record. Grand opening: everything FREE at $0.00.">
+<style>
+:root{--bg:#05070f;--bg2:#0a0f22;--line:#1c2745;--txt:#d7e3ff;--dim:#8b98b8;
+--cy:#00f0ff;--mg:#ff2fb3;--gd:#ffcf4d;--gr:#4dff9d;--vi:#9d6bff;--am:#ffb14d;
+--card:#0b1126;--card2:#0d1430}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:"Segoe UI",system-ui,-apple-system,sans-serif;line-height:1.55;
+background-image:linear-gradient(rgba(0,240,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.035) 1px,transparent 1px);
+background-size:44px 44px}
+/* THE JAH NETWORK */
+.jahnet{background:#04060d;color:#9aa4b2;font-size:.74em;padding:7px 10px;text-align:center;line-height:2.1;letter-spacing:.02em;border-bottom:1px solid var(--line)}
+.jahnet-t{color:var(--gd);font-weight:700;letter-spacing:.25em;margin-right:10px}
+.jahnet a{color:#9fc2ff;text-decoration:none;margin:0 6px;white-space:nowrap}
+.jahnet a:hover{text-decoration:underline}
+.jahnet .cur{color:var(--cy);font-weight:700;margin:0 6px;border:1px solid var(--cy);border-radius:6px;padding:1px 8px}
+/* mall top menu */
+.bigmenu{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;background:#04060dee;border-bottom:2px solid var(--cy);padding:10px 8px}
+.bigmenu a.mbtn{display:inline-block;background:linear-gradient(180deg,#0e2a44,#0a1c33);color:var(--cy);font-weight:800;text-decoration:none;font-size:1em;padding:10px 20px;border-radius:10px;border:1px solid var(--cy);letter-spacing:.03em}
+.bigmenu a.mbtn:active{transform:scale(.96)}
+.cartbtn{background:linear-gradient(180deg,#3a0f2b,#240816)!important;color:var(--mg)!important;border:1px solid var(--mg)!important}
+/* hero */
+.hero{text-align:center;padding:46px 16px 26px;background:radial-gradient(ellipse at 50% -10%,#132a52 0%,var(--bg) 65%);border-bottom:3px double var(--cy)}
+.hero .mallname{font-size:.95em;letter-spacing:.5em;color:var(--cy);text-transform:uppercase;margin:0}
+.hero h1{margin:.25em 0 .1em;font-size:2.6em;letter-spacing:.06em;color:#fff;text-shadow:0 0 26px var(--cy),0 0 60px #0077ff}
+.hero h1 .mg{color:var(--mg);text-shadow:0 0 26px var(--mg)}
+.grand{display:inline-block;margin:14px 0 6px;padding:10px 26px;border:2px solid var(--gd);border-radius:12px;color:var(--gd);font-weight:800;letter-spacing:.18em;font-size:1.05em;background:#1a1206aa;box-shadow:0 0 24px #ffcf4d55;text-transform:uppercase}
+.hero p{color:var(--dim);max-width:700px;margin:.5em auto}
+.counts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 16px;font-size:.9em;color:var(--txt)}
+.chip b{color:var(--cy)}
+/* floors */
+.wrap{max-width:1180px;margin:0 auto;padding:0 14px}
+.sec{margin:34px 0}
+.sec h2{color:var(--cy);letter-spacing:.14em;font-size:1.35em;border-bottom:1px solid var(--line);padding-bottom:8px;text-transform:uppercase}
+.sec h2 .sub{color:var(--dim);font-size:.6em;letter-spacing:.05em;text-transform:none;display:block;margin-top:4px}
+.floors{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:16px}
+.floor{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:14px;padding:18px;position:relative;overflow:hidden;cursor:pointer;transition:transform .12s,box-shadow .12s}
+.floor:hover{transform:translateY(-3px);box-shadow:0 8px 30px #00f0ff22;border-color:var(--cy)}
+.floor .fnum{position:absolute;top:8px;right:14px;font-size:2.4em;font-weight:800;color:#ffffff10}
+.floor h3{margin:.1em 0 .3em;font-size:1.25em;letter-spacing:.04em}
+.floor p{color:var(--dim);font-size:.92em;margin:.3em 0 .6em;min-height:3.2em}
+.floor .fcount{font-size:.85em;color:var(--txt)}
+.floor .fcount b{color:var(--cy);font-size:1.2em}
+.floor .enter{display:inline-block;margin-top:8px;padding:8px 18px;border-radius:8px;border:1px solid var(--cy);color:var(--cy);font-weight:700;font-size:.9em}
+.floor.soon{cursor:default;opacity:.75}
+.floor.soon:hover{transform:none;box-shadow:none;border-color:var(--line)}
+/* toolbar */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
+.toolbar input[type=search]{flex:1;min-width:200px;padding:12px 16px;border-radius:10px;border:1px solid var(--line);background:#060b1c;color:var(--txt);font-size:1em}
+.toolbar input[type=search]:focus{outline:none;border-color:var(--cy);box-shadow:0 0 12px #00f0ff44}
+.fchip{border:1px solid var(--line);background:var(--card);color:var(--dim);border-radius:999px;padding:8px 16px;cursor:pointer;font-size:.88em}
+.fchip.on{background:#0e2a44;color:var(--cy);border-color:var(--cy);font-weight:700}
+.az{display:flex;flex-wrap:wrap;gap:4px;margin:10px 0}
+.az button{background:none;border:1px solid var(--line);color:var(--dim);border-radius:6px;min-width:32px;padding:5px 6px;cursor:pointer;font-size:.85em}
+.az button.on{background:var(--cy);color:#03131a;font-weight:800;border-color:var(--cy)}
+/* product grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:14px}
+.card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .12s,box-shadow .12s}
+.card:hover{transform:translateY(-3px);box-shadow:0 10px 28px #00f0ff26;border-color:var(--cy)}
+.card .art{width:100%;aspect-ratio:1/1;display:block;background:#04060d}
+.card .body{padding:10px 12px 12px}
+.card .sku{font-size:.72em;color:var(--dim);letter-spacing:.06em}
+.card h4{margin:.2em 0 .3em;font-size:.98em;line-height:1.35;min-height:2.6em}
+.card .meta{font-size:.76em;color:var(--dim);margin:.15em 0}
+.stype{display:inline-block;font-size:.68em;font-weight:700;letter-spacing:.08em;border-radius:5px;padding:2px 8px;text-transform:uppercase;margin-right:6px}
+.stype.original{background:#0b3b2e;color:var(--gr);border:1px solid var(--gr)}
+.stype.generated{background:#2b2a08;color:var(--gd);border:1px solid var(--gd)}
+.stype.external{background:#2b1a08;color:var(--am);border:1px solid var(--am)}
+.price{font-size:1.15em;font-weight:800;color:var(--gr)}
+.price s{color:var(--dim);font-weight:400;font-size:.75em;margin-left:6px}
+.card .row{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.more{text-align:center;margin:22px 0}
+.more button{background:none;border:1px solid var(--cy);color:var(--cy);border-radius:10px;padding:12px 34px;font-size:1em;cursor:pointer;font-weight:700}
+/* modal */
+.overlay{position:fixed;inset:0;background:#02040acc;z-index:100;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:26px 12px}
+.overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--cy);border-radius:16px;max-width:640px;width:100%;overflow:hidden;box-shadow:0 0 60px #00f0ff33}
+.modal .art{width:100%;aspect-ratio:16/9;display:block;background:#04060d}
+.modal .mbody{padding:18px 20px 22px}
+.modal .sku{font-size:.78em;color:var(--dim);letter-spacing:.08em}
+.modal h3{margin:.2em 0 .4em;font-size:1.4em;color:#fff}
+.modal .blurb{color:var(--txt);font-size:.95em}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:6px 10px;margin:14px 0;font-size:.88em}
+.kv dt{color:var(--dim)} .kv dd{margin:0}
+.mbtns{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.btn{display:inline-block;padding:11px 20px;border-radius:10px;font-weight:700;text-decoration:none;cursor:pointer;border:1px solid;font-size:.95em}
+.btn.go{background:#0e2a44;border-color:var(--cy);color:var(--cy)}
+.btn.cart{background:#240816;border-color:var(--mg);color:var(--mg)}
+.btn.off{background:#1a1a1a;border-color:#444;color:#888;cursor:not-allowed}
+.close{float:right;background:none;border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:6px 12px;cursor:pointer}
+/* cart drawer */
+.drawer{position:fixed;top:0;right:-380px;width:360px;max-width:92vw;height:100%;background:var(--bg2);border-left:1px solid var(--mg);z-index:110;transition:right .25s;display:flex;flex-direction:column}
+.drawer.open{right:0}
+.drawer header{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.drawer header h3{margin:0;color:var(--mg);letter-spacing:.1em}
+.drawer .items{flex:1;overflow-y:auto;padding:12px 16px}
+.citem{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px;margin-bottom:8px}
+.citem svg{width:52px;height:52px;flex:none;border-radius:8px}
+.citem .nm{font-size:.85em;flex:1}
+.citem .rm{background:none;border:1px solid var(--line);color:var(--dim);border-radius:6px;cursor:pointer;padding:4px 8px}
+.drawer footer{padding:14px 16px;border-top:1px solid var(--line)}
+.totalrow{display:flex;justify-content:space-between;font-size:1.1em;margin-bottom:10px}
+.totalrow b{color:var(--gr)}
+.inactive-note{background:#1a0d06;border:1px dashed var(--am);border-radius:10px;padding:12px;font-size:.85em;color:var(--am);margin-bottom:10px}
+.checkout{width:100%;padding:14px;border-radius:10px;border:1px solid #555;background:#151515;color:#888;font-weight:800;font-size:1.05em;cursor:not-allowed;letter-spacing:.06em}
+/* footer */
+footer{margin-top:50px;border-top:2px solid var(--cy);padding:26px 16px 60px;color:var(--dim);font-size:.85em;background:#04060d}
+footer .wrap p{max-width:900px}
+.badge{display:inline-block;border:1px solid var(--gr);color:var(--gr);border-radius:6px;padding:2px 10px;font-size:.75em;font-weight:700;letter-spacing:.1em;margin-right:8px}
+@media(max-width:640px){.hero h1{font-size:1.8em}.kv{grid-template-columns:110px 1fr}}
+</style>
+</head>
+<body>
+<!-- THE JAH NETWORK -->
+<div class="jahnet"><span class="jahnet-t">THE JAH NETWORK</span><a href="https://justinahiggins614-cmyk.github.io/jah-ai-models/">The Signature AI Telephone Book</a><a href="https://justinahiggins614-cmyk.github.io/jah-calculator/">Signature Universal Paradox Immune Calculator</a><a href="https://justinahiggins614-cmyk.github.io/jah-dictionary/">The Signature Dictionary</a><a href="https://justinahiggins614-cmyk.github.io/jah-wiki/">JAH Wiki</a><a href="https://justinahiggins614-cmyk.github.io/jah-n-wiki-leaks/">JAH-N Wiki</a><a href="https://justinahiggins614-cmyk.github.io/cyber-patent-catalog/">Globally Rejustered Patent Catalog</a><a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html">Signature Spec Catalog Pending Patents</a><a href="https://justinahiggins614-cmyk.github.io/signature-llama/">Signature Llama</a><a href="https://justinahiggins614-cmyk.github.io/jah-computer-systems/">The Signature PC System Depository</a><span class="cur">YOU ARE HERE: SIGNATURE CYBER MEGA-MALL</span><a href="https://justinahiggins614-cmyk.github.io/signature-university/">Signature University</a><a href="https://justinahiggins614-cmyk.github.io/signature-books/">Signature Book Depository</a></div>
+<div class="bigmenu">
+<a class="mbtn" href="#floors">FLOORS</a>
+<a class="mbtn" href="#browse">BROWSE</a>
+<a class="mbtn" href="#browse" onclick="document.getElementById('q').focus()">SEARCH</a>
+<a class="mbtn cartbtn" href="javascript:void(0)" onclick="Cart.open()">CART (<span id="cartcount">0</span>)</a>
+</div>
+<div class="hero">
+<p class="mallname">Site 10 of 12 · The Universal Storefront Layer</p>
+<h1>SIGNATURE CYBER <span class="mg">MEGA-MALL</span></h1>
+<div class="grand">Grand Opening — Everything FREE · $0.00</div>
+<p>One mall over the whole JAH Network: AI &amp; software, knowledge, inventions, compute and tools — every product on the shelf is a real record deep-linked to its live source site. No login. No checkout yet. Take everything.</p>
+<div class="counts" id="livecounts"><span class="chip">loading inventory…</span></div>
+</div>
+<div class="wrap">
+<section class="sec" id="floors">
+<h2>Mall Directory <span class="sub">Six floors · pick a department to enter</span></h2>
+<div class="floors" id="floordir"></div>
+</section>
+<section class="sec" id="browse">
+<h2>Browse the Shelves <span class="sub">Search, filter, A–Z — counts come live from the inventory index</span></h2>
+<div class="toolbar">
+<input type="search" id="q" placeholder="Search 8,000+ products — name, description, record ID…" aria-label="Search products">
+<button class="fchip on" data-f="all">All floors</button>
+<button class="fchip" data-f="AI &amp; Software">AI &amp; Software</button>
+<button class="fchip" data-f="Knowledge">Knowledge</button>
+<button class="fchip" data-f="Inventions">Inventions</button>
+<button class="fchip" data-f="Compute">Compute</button>
+<button class="fchip" data-f="Tools">Tools</button>
+</div>
+<div class="az" id="az"></div>
+<div class="grid" id="grid"></div>
+<div class="more" id="morewrap"><button id="morebtn" onclick="Mall.more()">Load more</button></div>
+<p id="noresults" style="display:none;color:var(--dim);text-align:center">No products match — try another search or floor.</p>
+</section>
+</div>
+<div class="overlay" id="overlay" onclick="if(event.target===this)Mall.closeModal()">
+<div class="modal" role="dialog" aria-modal="true">
+<div id="mart"></div>
+<div class="mbody" id="mbody"></div>
+</div>
+</div>
+<aside class="drawer" id="drawer" aria-label="Shopping cart">
+<header><h3>CART</h3><button class="close" onclick="Cart.close()">✕</button></header>
+<div class="items" id="cartitems"></div>
+<footer>
+<div class="inactive-note">⛔ CHECKOUT IS <b>INACTIVE</b> — credit-card support is held until this site goes active. Nothing can be purchased right now; every price is $0.00.</div>
+<div class="totalrow"><span>Total</span><b id="carttotal">$0.00</b></div>
+<button class="checkout" disabled title="Checkout is inactive until the site goes active">CHECKOUT — DISABLED</button>
+</footer>
+</aside>
+<footer>
+<div class="wrap">
+<p><span class="badge">HONEST LABELING</span>Every product shows its source site and record type: <b>original</b> = made by Justin Addam Higgins / the Signature system · <b>generated</b> = produced by his deterministic generators · <b>external</b> = real public records harvested from public sources (e.g. public patents). Draft specs are marked Draft — ready to file, NOT filed, NOT granted patents.</p>
+<p>Persona-style AI entries are fan-style interpretations, not affiliated with or endorsed by any rights holder. All prices are $0.00 during the grand opening. Checkout and credit-card payment hooks exist in the code but are <b>inactive</b> and clearly labeled — they activate only on the owner's word.</p>
+<p>Built by the Signature system for Justin Addam Higgins. <a href="products.json" style="color:#9fc2ff">Machine-readable product index (JSON)</a> · <a href="sitemap.xml" style="color:#9fc2ff">sitemap.xml</a></p>
+</div>
+</footer>
+<script>
+"use strict";
+/* ============ deterministic PRNG + generative cyber art ============ */
+function xmur3(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}return()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return(h^=h>>>16)>>>0}}
+function mulberry32(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const DEPT_HUE={"AI & Software":186,"Knowledge":265,"Inventions":38,"Compute":140,"Tools":315,"Books & Courses":48};
+function svgArt(seed,dept,wide){
+  const s=xmur3(String(seed))(), rnd=mulberry32(s), hue=DEPT_HUE[dept]??200;
+  const W=wide?640:240,H=wide?360:240, col=`hsl(${hue},100%,60%)`, col2=`hsl(${(hue+50)%360},100%,55%)`;
+  let p=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Product art">`;
+  p+=`<defs><radialGradient id="g${s%99991}" cx="50%" cy="42%" r="75%"><stop offset="0%" stop-color="hsl(${hue},80%,14%)"/><stop offset="100%" stop-color="#04060d"/></radialGradient></defs>`;
+  p+=`<rect width="${W}" height="${H}" fill="url(#g${s%99991})"/>`;
+  // circuit traces
+  for(let i=0;i<9;i++){const y=Math.floor(rnd()*H),x1=Math.floor(rnd()*W*.4),x2=W*.6+Math.floor(rnd()*W*.4);
+    p+=`<path d="M${x1} ${y} H${(x1+x2)/2} V${y+(rnd()*60-30|0)} H${x2}" stroke="${col}" stroke-width="1" opacity="${.12+rnd()*.25}" fill="none"/>`;
+    p+=`<circle cx="${x2}" cy="${y+(0|0)}" r="2.4" fill="${col}" opacity=".7"/>`;}
+  // scanlines
+  for(let y=0;y<H;y+=6)p+=`<rect y="${y}" width="${W}" height="1" fill="#000" opacity=".22"/>`;
+  const cx=W/2, cy=H/2, R=Math.min(W,H)*.26, kind=Math.floor(rnd()*4);
+  const glow=`<filter id="f${s%99991}" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>`;
+  p+=glow;
+  if(kind===0){ // hexagon chip
+    let pts=[];for(let k=0;k<6;k++){const a=Math.PI/3*k-Math.PI/6;pts.push((cx+R*Math.cos(a)).toFixed(1)+","+(cy+R*Math.sin(a)).toFixed(1))}
+    p+=`<polygon points="${pts.join(" ")}" fill="none" stroke="${col}" stroke-width="3" filter="url(#f${s%99991})"/>`;
+    p+=`<polygon points="${pts.join(" ")}" fill="none" stroke="${col2}" stroke-width="1" opacity=".6" transform="translate(${cx} ${cy}) scale(.72) translate(${-cx} ${-cy})"/>`;
+    for(let k=0;k<6;k++){const a=Math.PI/3*k-Math.PI/6;p+=`<line x1="${(cx+R*1.18*Math.cos(a)).toFixed(1)}" y1="${(cy+R*1.18*Math.sin(a)).toFixed(1)}" x2="${(cx+R*Math.cos(a)).toFixed(1)}" y2="${(cy+R*Math.sin(a)).toFixed(1)}" stroke="${col}" stroke-width="2" opacity=".8"/>`;}
+    p+=`<circle cx="${cx}" cy="${cy}" r="${R*.28}" fill="${col}" opacity=".9" filter="url(#f${s%99991})"/>`;
+  }else if(kind===1){ // orb rings
+    for(let k=4;k>0;k--)p+=`<circle cx="${cx}" cy="${cy}" r="${R*k/4}" fill="none" stroke="${k%2?col:col2}" stroke-width="${k%2?2.5:1.2}" opacity="${.9-k*.15}" filter="url(#f${s%99991})"/>`;
+    p+=`<circle cx="${cx}" cy="${cy}" r="${R*.22}" fill="${col2}" opacity=".85"/>`;
+  }else if(kind===2){ // circuit core
+    p+=`<rect x="${cx-R}" y="${cy-R*.7}" width="${R*2}" height="${R*1.4}" rx="8" fill="none" stroke="${col}" stroke-width="3" filter="url(#f${s%99991})"/>`;
+    for(let k=0;k<5;k++){const yy=cy-R*.7+ (k+1)*R*1.4/6;p+=`<line x1="${cx-R-14}" y1="${yy}" x2="${cx+R+14}" y2="${yy}" stroke="${col2}" stroke-width="1.4" opacity=".7"/>`;
+      p+=`<circle cx="${cx-R-14}" cy="${yy}" r="3" fill="${col}"/><circle cx="${cx+R+14}" cy="${yy}" r="3" fill="${col}"/>`;}
+    p+=`<rect x="${cx-R*.4}" y="${cy-R*.28}" width="${R*.8}" height="${R*.56}" fill="${col}" opacity=".85"/>`;
+  }else{ // diamond lattice
+    p+=`<rect x="${cx-R*.8}" y="${cy-R*.8}" width="${R*1.6}" height="${R*1.6}" fill="none" stroke="${col}" stroke-width="3" transform="rotate(45 ${cx} ${cy})" filter="url(#f${s%99991})"/>`;
+    p+=`<rect x="${cx-R*.5}" y="${cy-R*.5}" width="${R}" height="${R}" fill="none" stroke="${col2}" stroke-width="1.5" transform="rotate(45 ${cx} ${cy})"/>`;
+    for(let k=0;k<8;k++){const a=Math.PI/4*k;p+=`<circle cx="${(cx+R*1.05*Math.cos(a)).toFixed(1)}" cy="${(cy+R*1.05*Math.sin(a)).toFixed(1)}" r="3.4" fill="${col}" opacity=".85"/>`;}
+  }
+  // corner brackets
+  const m=10,L=26;
+  p+=`<g stroke="${col}" stroke-width="3" opacity=".9"><path d="M${m} ${m+L}V${m}H${m+L}"/><path d="M${W-m-L} ${m}H${W-m}V${m+L}"/><path d="M${m} ${H-m-L}V${H-m}H${m+L}"/><path d="M${W-m-L} ${H-m}H${W-m}V${H-m-L}"/></g>`;
+  p+=`</svg>`;return p;
+}
+/* ============ mall engine ============ */
+const Mall={
+  manifest:null, idx:null, deptCache:{}, shown:0, pageSize:60,
+  curDept:"all", curLetter:"", curQuery:"",
+  slug:d=>d.toLowerCase().replace(/ /g,"-").replace(/&/g,"and"),
+  esc:s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),
+  async boot(){
+    try{this.manifest=await(await fetch("data/products/manifest.json")).json()}catch(e){}
+    this.renderCounts();this.renderFloors();this.renderAZ();
+    this.bindUI();
+    const pid=new URLSearchParams(location.search).get("product");
+    if(pid){this.openProduct(pid)}else{this.enterDept("all")}
+  },
+  renderCounts(){
+    const m=this.manifest, el=document.getElementById("livecounts");
+    if(!m){el.innerHTML="<span class='chip'>inventory offline</span>";return}
+    const total=m.count.toLocaleString();
+    el.innerHTML=`<span class="chip">Products on shelf: <b>${total}</b></span>`+
+      m.depts.filter(d=>m.by_dept[d]>0).map(d=>`<span class="chip">${this.esc(d)}: <b>${m.by_dept[d].toLocaleString()}</b></span>`).join("")+
+      `<span class="chip">Grand-opening price: <b>$0.00</b> everything</span>`;
+  },
+  renderFloors(){
+    const m=this.manifest,el=document.getElementById("floordir");
+    const desc={"AI & Software":"Talkable AIs, system minds and domain assistants from the Telephone Book.",
+      "Knowledge":"Dictionary words and LLM terms from the Dictionary and Signature Llama.",
+      "Inventions":"Draft specs and real public patents from the Spec Catalog and Patent Catalog.",
+      "Compute":"Every computer system in the PC System Depository, historic to predicted.",
+      "Tools":"Solved equations from the Calculator and code libraries from Signature Llama.",
+      "Books & Courses":"The University and Book Depository shelves — doors opening soon."};
+    el.innerHTML=m.depts.map((d,i)=>{
+      const c=m.by_dept[d]||0, soon=c===0;
+      return `<div class="floor${soon?" soon":""}" ${soon?"":`onclick="Mall.enterDept('${this.esc(d)}')"`}>
+      <div class="fnum">F${i+1}</div><h3>${this.esc(d)}</h3><p>${desc[d]}</p>
+      <div class="fcount"><b>${c.toLocaleString()}</b> products</div>
+      ${soon?`<div class="enter" style="border-color:#555;color:#888">OPENING SOON</div>`:`<div class="enter">ENTER FLOOR →</div>`}</div>`;
+    }).join("");
+  },
+  renderAZ(){
+    const el=document.getElementById("az");
+    el.innerHTML=`<button class="on" data-l="">#</button>`+"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(l=>`<button data-l="${l}">${l}</button>`).join("");
+    el.querySelectorAll("button").forEach(b=>b.onclick=()=>{el.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");this.curLetter=b.dataset.l;this.search(true)});
+  },
+  bindUI(){
+    const q=document.getElementById("q");let t;
+    q.addEventListener("input",()=>{clearTimeout(t);t=setTimeout(()=>{this.curQuery=q.value.trim();this.search(true)},220)});
+    document.querySelectorAll(".fchip").forEach(c=>c.onclick=()=>{
+      document.querySelectorAll(".fchip").forEach(x=>x.classList.remove("on"));c.classList.add("on");
+      this.enterDept(c.dataset.f.replace("&amp;","&"));
+    });
+    document.addEventListener("keydown",e=>{if(e.key==="Escape"){this.closeModal();Cart.close()}});
+  },
+  async deptProducts(dept){
+    if(this.deptCache[dept])return this.deptCache[dept];
+    const m=this.manifest;if(!m)return[];
+    const slug=this.slug(dept);
+    // "all" merges every dept chunk
+    const depts=dept==="all"?m.depts.filter(d=>m.by_dept[d]>0):[dept];
+    let out=[];
+    for(const d of depts){
+      const chunks=Math.ceil((m.by_dept[d]||0)/m.per_chunk);
+      for(let c=0;c<chunks;c++){
+        try{const r=await(await fetch(`data/products/by-dept/${this.slug(d)}-c${String(c).padStart(5,"0")}.json.gz`)).text();
+          out.push(...r.trim().split("\n").filter(Boolean).map(JSON.parse));}catch(e){}
+      }
+    }
+    this.deptCache[dept]=out;return out;
+  },
+  async enterDept(dept){
+    this.curDept=dept;this.curLetter="";this.curQuery="";document.getElementById("q").value="";
+    document.querySelectorAll(".fchip").forEach(x=>x.classList.toggle("on",x.dataset.f.replace("&amp;","&")===dept));
+    document.getElementById("az").querySelectorAll("button").forEach((b,i)=>b.classList.toggle("on",i===0));
+    this.grid=[];this.shown=0;document.getElementById("morewrap").style.display="";
+    this.grid=await this.deptProducts(dept);this.render(true);
+    document.getElementById("browse").scrollIntoView({behavior:"smooth"});
+  },
+  async search(reset){
+    if(reset){this.shown=0;document.getElementById("grid").innerHTML="";document.getElementById("morewrap").style.display=""}
+    if(!this.idx){
+      try{const r=await(await fetch("data/products/index.json.gz")).text();this.idx=JSON.parse(r)}catch(e){this.idx=[]}
+    }
+    const q=this.curQuery.toLowerCase(),L=this.curLetter.toUpperCase(),D=this.curDept;
+    this.grid=this.idx.filter(p=>
+      (D==="all"||p.d===D)&&
+      (!L||p.n.toUpperCase().startsWith(L))&&
+      (!q||p.n.toLowerCase().includes(q)||(p.b||"").toLowerCase().includes(q)||p.id.toLowerCase().includes(q)||(p.g||"").toLowerCase().includes(q))
+    ).slice(0,900);
+    this.render(true);
+  },
+  more(){this.render(false)},
+  cardHTML(p){
+    return `<div class="card" onclick="Mall.openProduct('${p.id}')">
+    <div class="art">${svgArt(p.g||p.seed||p.id,p.d||p.dept)}</div>
+    <div class="body"><div class="sku">${p.id} · ${this.esc(p.d||p.dept)}</div>
+    <h4>${this.esc(p.n||p.name)}</h4>
+    <div class="meta"><span class="stype ${p.t||p.stype}">${p.t||p.stype}</span>${this.esc(p.s||p.src)}</div>
+    <div class="row"><span class="price">$0.00<s>GRAND OPENING</s></span><span style="color:var(--cy);font-size:.85em">Details →</span></div>
+    </div></div>`;
+  },
+  render(reset){
+    const grid=document.getElementById("grid");
+    if(reset){grid.innerHTML="";this.shown=0}
+    const slice=this.grid.slice(this.shown,this.shown+this.pageSize);
+    grid.insertAdjacentHTML("beforeend",slice.map(p=>this.cardHTML(p)).join(""));
+    this.shown+=slice.length;
+    document.getElementById("noresults").style.display=this.grid.length?"none":"block";
+    document.getElementById("morewrap").style.display=this.shown>=this.grid.length?"none":"";
+  },
+  async openProduct(pid){
+    if(!this.idx){try{const r=await(await fetch("data/products/index.json.gz")).text();this.idx=JSON.parse(r)}catch(e){}}
+    const p=(this.idx||[]).find(x=>x.id===pid);
+    if(!p){return}
+    const full={id:p.id,name:p.n,dept:p.d,src:p.s,stype:p.t,sid:p.g,url:p.u,blurb:p.b,seed:p.g};
+    document.getElementById("mart").innerHTML=svgArt(full.seed,full.dept,true);
+    document.getElementById("mbody").innerHTML=`
+    <button class="close" onclick="Mall.closeModal()">✕ CLOSE</button>
+    <div class="sku">${full.id}</div><h3>${this.esc(full.name)}</h3>
+    <div class="meta"><span class="stype ${full.stype}">${full.stype}</span><span style="color:var(--dim);font-size:.85em">${this.esc(full.src)}</span></div>
+    <p class="blurb">${this.esc(full.blurb)||"No description — open the source record for the full file."}</p>
+    <dl class="kv">
+    <dt>Department</dt><dd>${this.esc(full.dept)}</dd>
+    <dt>Price</dt><dd><span class="price">$0.00</span> — grand opening, everything free</dd>
+    <dt>Source record</dt><dd>${this.esc(full.sid)}</dd>
+    <dt>Checkout</dt><dd style="color:var(--am)">Inactive — credit-card payments held until the site goes active.</dd>
+    </dl>
+    <div class="mbtns">
+    <a class="btn go" href="${this.esc(full.url)}" target="_blank" rel="noopener">OPEN SOURCE RECORD ↗</a>
+    <button class="btn cart" onclick='Cart.add(${JSON.stringify(full.id)})'>ADD TO CART</button>
+    <button class="btn off" disabled title="Checkout is inactive until the site goes active">BUY — DISABLED</button>
+    </div>
+    <p style="font-size:.78em;color:var(--dim);margin-top:12px">Deep link: <span style="color:#9fc2ff">?product=${full.id}</span> · share it anywhere.</p>`;
+    document.getElementById("overlay").classList.add("open");
+    history.replaceState(null,"","?product="+full.id);
+  },
+  closeModal(){document.getElementById("overlay").classList.remove("open");history.replaceState(null,"",location.pathname)}
+};
+/* ============ cart (checkout hooks present but INACTIVE) ============ */
+const Cart={
+  items:[], // product ids
+  load(){try{this.items=JSON.parse(localStorage.getItem("mallcart")||"[]")}catch(e){this.items=[]}},
+  save(){localStorage.setItem("mallcart",JSON.stringify(this.items))},
+  async add(pid){
+    if(!this.items.includes(pid))this.items.push(pid);
+    this.save();this.render();this.open();
+  },
+  remove(pid){this.items=this.items.filter(x=>x!==pid);this.save();this.render()},
+  open(){document.getElementById("drawer").classList.add("open")},
+  close(){document.getElementById("drawer").classList.remove("open")},
+  async render(){
+    document.getElementById("cartcount").textContent=this.items.length;
+    const box=document.getElementById("cartitems");
+    if(!this.items.length){box.innerHTML="<p style='color:var(--dim)'>Cart is empty — everything is $0.00, so fill it up.</p>";return}
+    if(!Mall.idx){try{Mall.idx=JSON.parse(await(await fetch("data/products/index.json.gz")).text())}catch(e){}}
+    box.innerHTML=this.items.map(id=>{
+      const p=(Mall.idx||[]).find(x=>x.id===id);if(!p)return"";
+      return `<div class="citem">${svgArt(p.g,p.d)}<div class="nm"><b>${Mall.esc(p.n)}</b><br><span style="color:var(--dim);font-size:.78em">${p.id} · $0.00</span></div><button class="rm" onclick="Cart.remove('${id}')">✕</button></div>`;
+    }).join("");
+  },
+  // ---- payment hooks: built, wired, but INACTIVE until owner activates ----
+  checkout:{active:false,
+    activate(){/* Owner-only: flip to true when the site goes active. Until then every call below refuses. */},
+    begin(){if(!this.active){alert("Checkout is INACTIVE — credit-card payments are held until this site goes active.");return false}return true},
+    chargeCard(){return this.begin()&&false}
+  }
+};
+Cart.load();
+document.addEventListener("DOMContentLoaded",()=>{Mall.boot();Cart.render()});
+</script>
+</body>
+</html>

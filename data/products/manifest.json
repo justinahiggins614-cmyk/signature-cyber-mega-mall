@@ -1,0 +1,31 @@
+{
+ "generated": "mall-harvest",
+ "count": 8821,
+ "chunks": 18,
+ "per_chunk": 500,
+ "depts": [
+  "AI & Software",
+  "Knowledge",
+  "Inventions",
+  "Compute",
+  "Tools",
+  "Books & Courses"
+ ],
+ "by_dept": {
+  "AI & Software": 260,
+  "Knowledge": 2316,
+  "Inventions": 4504,
+  "Compute": 121,
+  "Tools": 1620,
+  "Books & Courses": 0
+ },
+ "by_src": {
+  "Signature Spec Catalog": 3004,
+  "Globally Rejustered Patent Catalog": 1500,
+  "The Signature AI Telephone Book": 260,
+  "Signature Universal Paradox Immune Calculator": 1500,
+  "The Signature Dictionary": 2004,
+  "The Signature PC System Depository": 121,
+  "Signature Llama": 432
+ }
+}
