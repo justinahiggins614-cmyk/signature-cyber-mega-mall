@@ -189,6 +189,7 @@ footer .wrap p{max-width:900px}
 .badge{display:inline-block;border:1px solid var(--gr);color:var(--gr);border-radius:6px;padding:2px 10px;font-size:.75em;font-weight:700;letter-spacing:.1em;margin-right:8px}
 @media(max-width:640px){.hero h1{font-size:1.8em}.kv{grid-template-columns:110px 1fr}}
 </style>
+<script src="js/jah-talk-fallback.js"></script>
 </head>
 <body>
 <!-- THE JAH NETWORK -->
@@ -748,6 +749,25 @@ function auStop(){
   try{if(window.speechSynthesis)window.speechSynthesis.cancel()}catch(e){}
   auShowBar(false);
 }
+/* ---- JAHtalk shared talk module: human voice + duties, stat-dump guard ----
+   The Finder Host is a site helper (NOT a canon phone-book AI — it claims no
+   JAH-AI ID). Social intents get warm human replies; every final host reply
+   is guarded against terse machine dumps. */
+const FINDER_PROFILE={name:"Finder Host",id:"",
+ description:"The mall's customer-service concierge. I walk shoppers to the right shelf from plain-words descriptions, and answer product questions from the product's own page.",
+ abilities:["Find products from plain-words descriptions","Answer price, location, department, and source-record questions","Point you to the right mall floor"],
+ domain:"Signature Cyber Mega-Mall",kind:"domain"};
+function finderSocial(q){
+ if(typeof JAHtalk==="undefined")return null;
+ var low=String(q||"").toLowerCase(),t=" "+low+" ";
+ if(/^(hi|hii+|hey|hello|yo|howdy|good\s?(morning|afternoon|evening|day)|greetings|sup|hiya)\b/.test(low)||
+    /\b(what are your duties|what is your duty|what do you do|what can you do|your duties|your job|your role|your abilities|explain your duties|who are you|your name|introduce yourself|what are you for|how are you|thank|bye|goodbye)\b/.test(t))
+  return JAHtalk.reply(FINDER_PROFILE,q);
+ return null;
+}
+function finderGuard(html){
+ return (typeof JAHtalk==="undefined")?html:JAHtalk.guard(html,FINDER_PROFILE);
+}
 /* ============ Finder Host — the mall's customer-service concierge ============
    Deterministic, offline-capable: keyword extraction + the local product index
    only. No backend calls. Works anywhere the page works. */
@@ -773,11 +793,13 @@ const Finder={
   },
   esc:s=>Mall.esc(s),
   fsay(html,who){
+    if(who!=="you")html=finderGuard(html);
     const log=document.getElementById("flog");
     const d=document.createElement("div");d.className="fmsg "+who;d.innerHTML=html;
     log.appendChild(d);log.scrollTop=log.scrollHeight;
   },
   hsay(html,who){
+    if(who!=="you")html=finderGuard(html);
     const log=document.getElementById("hlog");if(!log)return;
     const d=document.createElement("div");d.className="fmsg "+who;d.innerHTML=html;
     log.appendChild(d);log.scrollTop=log.scrollHeight;
@@ -799,6 +821,8 @@ const Finder={
     const inp=document.getElementById("fq"),q=inp.value.trim();
     if(!q)return;
     this.fsay(this.esc(q),"you");
+    const soc=finderSocial(q);
+    if(soc!==null){this.fsay(this.esc(soc)+" 🛎","host");return}
     const kws=this.keywords(q);
     if(!kws.length){this.fsay("Give me one more word to go on — a thing, a hobby, a person you're shopping for… 🛎","host");return}
     const idx=await this.ensureIdx();
@@ -827,6 +851,8 @@ const Finder={
     const inp=document.getElementById("hq"),q=inp.value.trim(),c=this.cur;
     if(!q||!c)return;
     this.hsay(this.esc(q),"you");inp.value="";
+    const soc2=finderSocial(q);
+    if(soc2!==null){this.hsay(this.esc(soc2),"host");return}
     const t=q.toLowerCase(),f=c.full,l=c.loc,E=this.esc.bind(this);
     let a;
     if(/price|cost|how much|free|\$/.test(t))a=`It's <b>$0.00</b> — grand opening, everything in the mall is free right now.`;
