@@ -97,6 +97,10 @@ def main():
     man = json.load(open(os.path.join(ROOT, "data", "products", "manifest.json")))
     depts = man["depts"]
     n = len(idx)
+    # Site #10 fix wave: browse pages must agree with the authoritative counts.json
+    cc = json.load(open(os.path.join(ROOT, "counts.json")))
+    assert cc["total"] == n, "counts.json total %d != index %d" % (cc["total"], n)
+    assert cc["total"] == man["count"], "counts.json != manifest count"
     shards = math.ceil(n / PER)
     crumb = ('<p class="meta"><a href="../">Signature Cyber Mega-Mall</a> &middot; '
              '<a href="index.html">Browse index</a> &middot; <a href="departments.html">Departments</a></p>')
