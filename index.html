@@ -7,6 +7,7 @@
 <meta name="description" content="The Signature Cyber Mega-Mall: the universal storefront layer over the JAH Network. AI, software, knowledge, inventions, compute and tools — every product deep-links to its live source record. Grand opening: everything FREE at $0.00.">
 <link rel="canonical" href="https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Signature Cyber Mega-Mall","url":"https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/","creator":{"@type":"Person","name":"Justin Addam Higgins"},"description":"The universal storefront layer over the JAH Network: 8,821 original Signature products across AI & software, knowledge, inventions, compute and tools. Grand opening: everything $0.00; checkout inactive until the site goes active."}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","name":"The Signature Cyber Mega-Mall","creator":{"@type":"Person","name":"Justin Addam Higgins"}}</script>
 <style>
 :root{--bg:#05070f;--bg2:#0a0f22;--line:#1c2745;--txt:#d7e3ff;--dim:#8b98b8;
 --cy:#00f0ff;--mg:#ff2fb3;--gd:#ffcf4d;--gr:#4dff9d;--vi:#9d6bff;--am:#ffb14d;
@@ -58,7 +59,7 @@ background-size:44px 44px}
 .toolbar input[type=search]:focus{outline:none;border-color:var(--cy);box-shadow:0 0 12px #00f0ff44}
 .fchip{border:1px solid var(--line);background:var(--card);color:var(--dim);border-radius:999px;padding:8px 16px;cursor:pointer;font-size:.88em}
 .fchip.on{background:#0e2a44;color:var(--cy);border-color:var(--cy);font-weight:700}
-.az{display:flex;flex-wrap:wrap;gap:4px;margin:10px 0}
+.az{display:flex;flex-wrap:wrap;gap:4px;margin:10px 0;position:sticky;top:60px;z-index:40;background:#04060d;border-radius:8px;padding:8px 4px}
 .az button{background:none;border:1px solid var(--line);color:var(--dim);border-radius:6px;min-width:32px;padding:5px 6px;cursor:pointer;font-size:.85em}
 .az button.on{background:var(--cy);color:#03131a;font-weight:800;border-color:var(--cy)}
 /* finder host — mall concierge chat strip */
@@ -152,7 +153,11 @@ padding:5px;font-family:inherit}
 .more{text-align:center;margin:22px 0}
 .more button{background:none;border:1px solid var(--cy);color:var(--cy);border-radius:10px;padding:12px 34px;font-size:1em;cursor:pointer;font-weight:700}
 /* modal */
-.overlay{position:fixed;inset:0;background:#02040acc;z-index:100;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:26px 12px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);z-index:100;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:26px 12px}
+.drscrim{position:fixed;inset:0;background:rgba(0,0,0,0.8);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);z-index:105;display:none}
+.drscrim.on{display:block}
+.statsum{display:none}
+@media(max-width:767px){.statsum{display:block;cursor:pointer;color:var(--dim);font-size:.85em;text-align:center;padding:6px 0}.statdrop{border:1px solid var(--line);border-radius:10px;margin:12px 0}.statdrop .counts{justify-content:center;padding:6px 8px 12px}}
 .overlay.open{display:flex}
 .modal{background:var(--bg2);border:1px solid var(--cy);border-radius:16px;max-width:640px;width:100%;overflow:hidden;box-shadow:0 0 60px #00f0ff33}
 .modal .art{width:100%;aspect-ratio:16/9;display:block;background:#04060d}
@@ -193,7 +198,9 @@ footer .wrap p{max-width:900px}
 </head>
 <body>
 <!-- THE JAH NETWORK -->
+<nav aria-label="JAH Network Global Ecosystem" role="navigation">
 <div class="jahnet"><span class="jahnet-t">THE JAH NETWORK</span><a href="https://justinahiggins614-cmyk.github.io/jah-ai-models/">The Signature AI Phone Book</a><a href="https://justinahiggins614-cmyk.github.io/jah-calculator/">Calculator</a><a href="https://justinahiggins614-cmyk.github.io/jah-dictionary/">Dictionary</a><a href="https://justinahiggins614-cmyk.github.io/jah-wiki/">JAH Wiki</a><a href="https://justinahiggins614-cmyk.github.io/jah-n-wiki-leaks/">JAH-N Wiki</a><a href="https://justinahiggins614-cmyk.github.io/cyber-patent-catalog/">Patent Catalog</a><a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html">Spec Catalog</a><a href="https://justinahiggins614-cmyk.github.io/signature-llama/">Signature Llama</a><a href="https://justinahiggins614-cmyk.github.io/jah-computer-systems/">PC Depository</a><span class="cur">YOU ARE HERE: SIGNATURE CYBER MEGA-MALL</span><a href="https://justinahiggins614-cmyk.github.io/signature-university/">Signature University</a><a href="https://justinahiggins614-cmyk.github.io/signature-books/">Book Depository</a><a href="https://justinahiggins614-cmyk.github.io/signature-comics/">Comic Store</a><a href="https://justinahiggins614-cmyk.github.io/signature-newspapers/">Global Newspaper Archive</a><a href="https://justinahiggins614-cmyk.github.io/signature-3d-print/">3D Print Depository</a><a href="https://justinahiggins614-cmyk.github.io/signature-backend/">Mad Scientist Lab</a><a href="https://justinahiggins614-cmyk.github.io/signature-boundless-generators/">Boundless Generator Archive</a><a href="https://justinahiggins614-cmyk.github.io/signature-ai-mixlab/">AI Mix Lab</a><a href="https://justinahiggins614-cmyk.github.io/signature-ai-olypics/">AI Olypics</a><a href="https://justinahiggins614-cmyk.github.io/signature-chip-maker/">Chip Maker and Archive</a><a href="https://justinahiggins614-cmyk.github.io/signature-app-archive/">App Archive</a><a href="https://justinahiggins614-cmyk.github.io/signature-ai-robot-matcher/">AI Robot Matcher</a><a href="https://justinahiggins614-cmyk.github.io/signature-experiment-solver/">Experiment Solver</a><a href="https://justinahiggins614-cmyk.github.io/signature-ai-image-video-maker/">Signature AI Pixel</a><a href="https://justinahiggins614-cmyk.github.io/signature-ai-song-maker/">Signature Music Studio</a></div>
+</nav>
 <div class="bigmenu">
 <a class="mbtn" href="#floors">FLOORS</a>
 <a class="mbtn" href="#browse">BROWSE</a>
@@ -207,7 +214,9 @@ footer .wrap p{max-width:900px}
 <h1>SIGNATURE CYBER <span class="mg">MEGA-MALL</span></h1>
 <div class="grand">Grand Opening — Everything FREE · $0.00</div>
 <p>One mall over the whole JAH Network: AI &amp; software, knowledge, inventions, compute and tools — every product on the shelf is a real record deep-linked to its live source site. No login. No checkout yet. Take everything.</p>
+<details class="statdrop" open><summary class="statsum">Inventory counts — tap to hide</summary>
 <div class="counts" id="livecounts"><span class="chip">loading inventory…</span></div>
+</details>
 </div>
 <div class="wrap">
 <section class="sec" id="entrymap">
@@ -248,6 +257,7 @@ footer .wrap p{max-width:900px}
 <div class="mbody" id="mbody"></div>
 </div>
 </div>
+<div class="drscrim" id="drscrim" onclick="Cart.close()" aria-hidden="true"></div>
 <aside class="drawer" id="drawer" aria-label="Shopping cart">
 <header><h3>CART</h3><button class="close" onclick="Cart.close()">✕</button></header>
 <div class="items" id="cartitems"></div>
@@ -639,7 +649,7 @@ const Mall={
     <div id="custplate"></div>
     </div>
     <p style="font-size:.78em;color:var(--dim);margin-top:12px">Deep link: <span style="color:#9fc2ff">?product=${full.id}</span> · share it anywhere.</p>`;
-    document.getElementById("overlay").classList.add("open");
+    document.getElementById("overlay").classList.add("open");lockScroll();
     history.replaceState(null,"","?product="+full.id);
     Finder.cur={full:full,loc:loc};
     const hq=document.getElementById("hq");
@@ -647,7 +657,7 @@ const Mall={
     mHead(full.name+" — Signature Cyber Mega-Mall",(full.blurb||full.name+" — $0.00 at the Signature Cyber Mega-Mall"),"https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/?product="+full.id);
     this.paintPlate(full.id);
   },
-  closeModal(){document.getElementById("overlay").classList.remove("open");var _h=mHome();mHead(_h.t,_h.d,_h.c);try{history.replaceState(null,"",_h.c)}catch(e){history.replaceState(null,"",location.pathname)}}
+  closeModal(){document.getElementById("overlay").classList.remove("open");unlockScroll();var _h=mHome();mHead(_h.t,_h.d,_h.c);try{history.replaceState(null,"",_h.c)}catch(e){history.replaceState(null,"",location.pathname)}}
 };
 /* ============ tiered read-aloud: same chain as the other nine sites ============
    speechSynthesis (en-US female preferred) first; online tiers fail over
@@ -904,8 +914,8 @@ const Cart={
     this.save();this.render();this.open();
   },
   remove(pid){this.items=this.items.filter(x=>x!==pid);this.save();this.render()},
-  open(){document.getElementById("drawer").classList.add("open")},
-  close(){document.getElementById("drawer").classList.remove("open")},
+  open(){document.getElementById("drawer").classList.add("open");var sc=document.getElementById("drscrim");if(sc)sc.classList.add("on");lockScroll()},
+  close(){document.getElementById("drawer").classList.remove("open");var sc=document.getElementById("drscrim");if(sc)sc.classList.remove("on");unlockScroll()},
   async render(){
     document.getElementById("cartcount").textContent=this.items.length;
     const box=document.getElementById("cartitems");
@@ -923,6 +933,15 @@ const Cart={
     chargeCard(){return this.begin()&&false}
   }
 };
+var _scrollLocks=0;
+function lockScroll(){_scrollLocks++;document.body.style.overflow="hidden"}
+function unlockScroll(){_scrollLocks=Math.max(0,_scrollLocks-1);if(!_scrollLocks)document.body.style.overflow=""}
+(function(){
+  function azTop(){var bm=document.querySelector(".bigmenu"),az=document.getElementById("az");if(bm&&az)az.style.top=bm.offsetHeight+"px"}
+  function mobStat(){var sd=document.querySelector(".statdrop");if(sd&&window.matchMedia&&window.matchMedia("(max-width:767px)").matches)sd.removeAttribute("open")}
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){azTop();mobStat()});else{azTop();mobStat()}
+  window.addEventListener("resize",azTop);
+})();
 Cart.load();
 document.addEventListener("DOMContentLoaded",()=>{Mall.boot();Cart.render()});
 </script>
