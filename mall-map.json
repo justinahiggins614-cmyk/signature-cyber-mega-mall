@@ -1,0 +1,65 @@
+{
+ "spec": "JAH-MALL-MAP/1.0",
+ "generated_at": "2026-10-03T13:49:30Z",
+ "entrance": {
+  "label": "main entrance",
+  "marker": "YOU ARE HERE"
+ },
+ "floors": [
+  {
+   "floor_id": "F1",
+   "floor_number": 1,
+   "department": "AI & Software",
+   "department_id": "ai-and-software",
+   "product_count": 260,
+   "status": "open",
+   "canonical_url": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/browse/dept-ai-and-software.html"
+  },
+  {
+   "floor_id": "F2",
+   "floor_number": 2,
+   "department": "Knowledge",
+   "department_id": "knowledge",
+   "product_count": 2316,
+   "status": "open",
+   "canonical_url": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/browse/dept-knowledge.html"
+  },
+  {
+   "floor_id": "F3",
+   "floor_number": 3,
+   "department": "Inventions",
+   "department_id": "inventions",
+   "product_count": 4504,
+   "status": "open",
+   "canonical_url": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/browse/dept-inventions.html"
+  },
+  {
+   "floor_id": "F4",
+   "floor_number": 4,
+   "department": "Compute",
+   "department_id": "compute",
+   "product_count": 121,
+   "status": "open",
+   "canonical_url": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/browse/dept-compute.html"
+  },
+  {
+   "floor_id": "F5",
+   "floor_number": 5,
+   "department": "Tools",
+   "department_id": "tools",
+   "product_count": 1620,
+   "status": "open",
+   "canonical_url": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/browse/dept-tools.html"
+  },
+  {
+   "floor_id": "F6",
+   "floor_number": 6,
+   "department": "Books & Courses",
+   "department_id": "books-and-courses",
+   "product_count": 0,
+   "status": "opening_soon",
+   "canonical_url": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/browse/dept-books-and-courses.html"
+  }
+ ],
+ "note": "Floor F1..Fn map 1:1 onto departments in manifest order. Product mall location: floor = department index+1, aisle = deterministic hash of product ID."
+}

@@ -1,0 +1,67 @@
+{
+ "spec": "JAH-MALL-MANIFEST/1.0",
+ "mall_id": "JAH-MALL",
+ "mall_name": "The Signature Cyber Mega-Mall",
+ "mall_version": "1.0",
+ "network_site_number": 10,
+ "network_site_count": 25,
+ "inventory_version": "mall-harvest",
+ "inventory_count": 8821,
+ "inventory_sha256": "c2e71469f023751df3a87f8455a46425921c59720c76cf36ff851be2a41eab1d",
+ "schema_version": "JAH-MALL-RECORD/1.0",
+ "generator_version": "mall-harvest",
+ "last_updated": "2026-10-03T13:49:30Z",
+ "departments": [
+  {
+   "id": "AI & Software",
+   "name": "AI & Software",
+   "product_count": 260,
+   "canonical_url": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/browse/dept-ai-and-software.html"
+  },
+  {
+   "id": "Knowledge",
+   "name": "Knowledge",
+   "product_count": 2316,
+   "canonical_url": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/browse/dept-knowledge.html"
+  },
+  {
+   "id": "Inventions",
+   "name": "Inventions",
+   "product_count": 4504,
+   "canonical_url": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/browse/dept-inventions.html"
+  },
+  {
+   "id": "Compute",
+   "name": "Compute",
+   "product_count": 121,
+   "canonical_url": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/browse/dept-compute.html"
+  },
+  {
+   "id": "Tools",
+   "name": "Tools",
+   "product_count": 1620,
+   "canonical_url": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/browse/dept-tools.html"
+  },
+  {
+   "id": "Books & Courses",
+   "name": "Books & Courses",
+   "product_count": 0,
+   "canonical_url": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/browse/dept-books-and-courses.html"
+  }
+ ],
+ "origin_types": [
+  "external",
+  "generated",
+  "original"
+ ],
+ "product_types": [
+  "catalog record"
+ ],
+ "license": "Free-use license in the name of Justin Addam Higgins (see site). Source records keep their own owners/licenses.",
+ "price_status": "FREE_NOW",
+ "checkout_status": "DISABLED",
+ "canonical_url": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/",
+ "counts": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/counts.json",
+ "inventory": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/products.json",
+ "schema": "https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/mall-record-schema.json"
+}

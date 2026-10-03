@@ -15,7 +15,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Signature Cyber Mega-Mall — Grand Opening · Everything $0.00">
 <meta name="twitter:description" content="The Signature Cyber Mega-Mall: the universal storefront layer over the JAH Network. AI, software, knowledge, inventions, compute and tools — every product deep-links to its live source record. Grand opening: everything FREE at $0.00.">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Signature Cyber Mega-Mall","url":"https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/","creator":{"@type":"Person","name":"Justin Addam Higgins"},"description":"The universal storefront layer over the JAH Network: 8,821 original Signature products across AI & software, knowledge, inventions, compute and tools. Grand opening: everything $0.00; checkout inactive until the site goes active."}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Signature Cyber Mega-Mall","url":"https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/","creator":{"@type":"Person","name":"Justin Addam Higgins"},"description":"The universal storefront layer over the JAH Network: 8,821 products across AI & software, knowledge, inventions, compute and tools. Grand opening: everything $0.00; checkout inactive until the site goes active."}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","name":"The Signature Cyber Mega-Mall","creator":{"@type":"Person","name":"Justin Addam Higgins"}}</script>
 <style>
 :root{--bg:#05070f;--bg2:#0a0f22;--line:#1c2745;--txt:#d7e3ff;--dim:#8b98b8;
@@ -274,7 +274,7 @@ paint();})();
 <div class="grand">Grand Opening — Everything FREE · $0.00</div>
 <p>One mall over the whole JAH Network: AI &amp; software, knowledge, inventions, compute and tools — every product on the shelf is a real record deep-linked to its live source site. No login. No checkout yet. Take everything.</p>
 <details class="statdrop" open><summary class="statsum">Inventory counts — tap to hide</summary>
-<div class="counts" id="livecounts"><span class="chip">loading inventory…</span></div>
+<div class="counts" id="livecounts"><span class="chip">8,821 products on shelf</span><span class="chip">snapshot 2026-10-03</span><span class="chip">Grand-opening price: <b>$0.00</b> everything</span></div>
 </details>
 </div>
 <div class="wrap">
@@ -294,6 +294,7 @@ paint();})();
 <input type="search" id="q" placeholder="Search products — name, description, record ID…" aria-label="Search products">
 <span id="matchcount" aria-live="polite"></span>
 <span id="fchips" style="display:contents"></span>
+<span id="ochips" style="display:contents" aria-label="Filter by origin"></span>
 </div>
 <div class="finder" id="finder">
 <div class="fhead"><span class="fhost">🛎</span><div><b>FINDER HOST</b><span>your mall concierge — describe what you're looking for in plain words</span></div></div>
@@ -395,22 +396,52 @@ var _mhome=null;
 function mHome(){if(!_mhome){var md=document.querySelector('meta[name="description"]'),cl=document.querySelector('link[rel="canonical"]');_mhome={t:document.title,d:md?md.getAttribute("content"):"",c:cl?cl.getAttribute("href"):"https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/"}}return _mhome}
 function mHead(title,desc,canon){var h=mHome();document.title=title||h.t;var md=document.querySelector('meta[name="description"]');if(md)md.setAttribute("content",desc||h.d);var cl=document.querySelector('link[rel="canonical"]');if(cl)cl.setAttribute("href",canon||h.c)}
 const Mall={
-  manifest:null, idx:null, deptCache:{}, shown:0, pageSize:60, searchDone:false,
-  curDept:"all", curLetter:"", curQuery:"",
+  manifest:null, counts:null, hashes:null, idx:null, deptCache:{}, shown:0, pageSize:60, searchDone:false,
+  curDept:"all", curLetter:"", curQuery:"", curOrigin:"all", userSearched:false, loadError:false,
   slug:d=>d.toLowerCase().replace(/ /g,"-").replace(/&/g,"and"),
   esc:s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),
   async boot(){
     try{this.manifest=await(await fetch("data/products/manifest.json")).json()}catch(e){}
-    this.renderCounts();this.renderChips();this.renderDeptNav();this.renderEntryMap();this.renderFloors();this.renderAZ();
+    try{this.counts=await(await fetch("counts.json")).json()}catch(e){}
+    this.loadError=!this.manifest;
+    this.renderSiteLine();
+    this.renderCounts();this.renderChips();this.renderOriginChips();this.renderDeptNav();this.renderEntryMap();this.renderFloors();this.renderAZ();
     this.bindUI();
     this.renderGuide();
     Finder.greet();
     const pid=new URLSearchParams(location.search).get("product");
     if(pid){this.openProduct(pid)}else{this.enterDept("all")}
   },
+  /* Site #10 fix wave: network site line renders from the network manifest (never hard-coded) */
+  async renderSiteLine(){
+    try{
+      const nm=await(await fetch("JAH-NETWORK-MANIFEST.json")).json();
+      const el=document.querySelector(".mallname");
+      if(el&&nm.site_number&&nm.site_count)
+        el.textContent=`Site ${nm.site_number} of ${nm.site_count} · The Universal Storefront Layer`;
+    }catch(e){}
+  },
+  /* Site #10 fix wave: origin filter chips (existing fchip visual language) */
+  renderOriginChips(){
+    const el=document.getElementById("ochips");if(!el)return;
+    const opts=[["all","All origins"],["original","Signature Original"],["generated","Generated"],["external","Public Record"]];
+    el.innerHTML=opts.map(o=>`<button class="fchip${o[0]==="all"?" on":""}" data-o="${o[0]}" aria-label="Filter by origin: ${o[1]}">${o[1]}</button>`).join("");
+    el.querySelectorAll("button").forEach(b=>b.onclick=()=>{el.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");this.curOrigin=b.dataset.o;this.userSearched=true;this.search(true);});
+  },
+  matchOrigin(p){return this.curOrigin==="all"||(p.t||p.stype)===this.curOrigin;},
   renderCounts(){
-    const m=this.manifest, el=document.getElementById("livecounts");
-    if(!m){el.innerHTML="<span class='chip'>inventory offline</span>";return}
+    const el=document.getElementById("livecounts"), c=this.counts, m=this.manifest;
+    /* authoritative source: counts.json */
+    if(c){
+      const total=c.total.toLocaleString();
+      el.innerHTML=`<span class="chip">Products on shelf: <b>${total}</b></span>`+
+        Object.keys(c.by_dept).filter(d=>c.by_dept[d]>0).map(d=>`<span class="chip">${this.esc(d)}: <b>${c.by_dept[d].toLocaleString()}</b></span>`).join("")+
+        `<span class="chip">Grand-opening price: <b>$0.00</b> everything</span>`+
+        `<span class="chip">DATA VERSION: <b>${this.esc(c.dataset_version)}</b> · ${this.esc(c.generated_at)}</span>`;
+      document.getElementById("q").placeholder=`Search ${total} products — name, description, record ID…`;
+      return;
+    }
+    if(!m){el.innerHTML="<span class='chip'>inventory offline</span> <button class='fchip' onclick='Mall.boot()'>Retry</button>";return}
     const total=m.count.toLocaleString();
     el.innerHTML=`<span class="chip">Products on shelf: <b>${total}</b></span>`+
       m.depts.filter(d=>m.by_dept[d]>0).map(d=>`<span class="chip">${this.esc(d)}: <b>${m.by_dept[d].toLocaleString()}</b></span>`).join("")+
@@ -629,7 +660,7 @@ const Mall={
   },
   bindUI(){
     const q=document.getElementById("q");let t;
-    q.addEventListener("input",()=>{clearTimeout(t);t=setTimeout(()=>{this.curQuery=q.value.trim();this.search(true)},220)});
+    q.addEventListener("input",()=>{clearTimeout(t);t=setTimeout(()=>{this.curQuery=q.value.trim();this.userSearched=true;this.search(true)},220)});
     document.addEventListener("keydown",e=>{if(e.key==="Escape"){this.closeModal();Cart.close()}});
   },
   async deptProducts(dept){
@@ -654,7 +685,7 @@ const Mall={
     this.syncDeptNav();
     document.getElementById("az").querySelectorAll("button").forEach((b,i)=>b.classList.toggle("on",i===0));
     this.grid=[];this.shown=0;document.getElementById("morewrap").style.display="";
-    this.grid=await this.deptProducts(dept);this.searchDone=true;this.render(true);
+    this.grid=(await this.deptProducts(dept)).filter(p=>this.matchOrigin(p));this.searchDone=true;this.render(true);
     document.getElementById("browse").scrollIntoView({behavior:"smooth"});
   },
   async search(reset){
@@ -662,9 +693,11 @@ const Mall={
     if(!this.idx){
       try{this.idx=JSON.parse(await gz("data/products/index.json.gz"))}catch(e){this.idx=[]}
     }
+    if(!this.idx.length)this.loadError=true;
     const q=this.curQuery.toLowerCase(),L=this.curLetter.toUpperCase(),D=this.curDept;
     this.grid=this.idx.filter(p=>
       (D==="all"||p.d===D)&&
+      this.matchOrigin(p)&&
       (!L||p.n.toUpperCase().startsWith(L))&&
       (!q||p.n.toLowerCase().includes(q)||(p.b||"").toLowerCase().includes(q)||p.id.toLowerCase().includes(q)||(p.g||"").toLowerCase().includes(q))
     ).slice(0,900);
@@ -729,7 +762,15 @@ const Mall={
     const slice=this.grid.slice(this.shown,this.shown+this.pageSize);
     grid.insertAdjacentHTML("beforeend",slice.map(p=>this.cardHTML(p)).join(""));
     this.shown+=slice.length;
-    document.getElementById("noresults").style.display=(this.searchDone&&!this.grid.length)?"block":"none";
+    /* Site #10 fix wave: "No products match" only after a real user search; load failures get Retry */
+    const nr=document.getElementById("noresults");
+    if(this.searchDone&&!this.grid.length){
+      nr.style.display="block";
+      nr.innerHTML=this.loadError
+        ?`Mall inventory could not be loaded. <button class="fchip" onclick="Mall.boot()">Retry</button> <a href="products.json" style="color:#9fc2ff">Open inventory</a>`
+        :this.userSearched?`No products match — try another search or floor.`
+        :`Browse is empty — the inventory index didn’t load. <button class="fchip" onclick="Mall.boot()">Retry</button>`;
+    }else nr.style.display="none";
     document.getElementById("morewrap").style.display=this.shown>=this.grid.length?"none":"";
     const mc=document.getElementById("matchcount");
     if(mc)mc.textContent=!this.searchDone?"searching inventory…":(this.grid.length?this.grid.length.toLocaleString()+" match"+(this.grid.length===1?"":"es"):"no matches");
@@ -807,8 +848,12 @@ const Mall={
     <a class="btn go" href="${this.esc(full.url)}" target="_blank" rel="noopener">OPEN SOURCE RECORD ↗</a>
     <button class="btn aud" onclick='Aud.readById(${JSON.stringify(full.id)})'>&#128266; READ ALOUD</button>
     <button class="btn cart" onclick='Cart.add(${JSON.stringify(full.id)})'>ADD TO CART</button>
+    <button class="btn" onclick='Mall.rawJSON(${JSON.stringify(full.id)})'>RAW JSON</button>
+    <button class="btn" onclick='Mall.report(${JSON.stringify(full.id)})'>REPORT</button>
     <button class="btn off" disabled title="Checkout is inactive until the site goes active">BUY — DISABLED</button>
     </div>
+    <div id="mraw" style="margin-top:10px"></div>
+    <div id="mrep" style="margin-top:10px"></div>
     <div class="custom">
     <h4>✨ MAKE IT YOURS</h4>
     <p>Put your name on it — the mall mints a one-of-a-kind personalized plate for this product, saved on this device.</p>
@@ -825,7 +870,51 @@ const Mall={
     mHead(full.name+" — Signature Cyber Mega-Mall",(full.blurb||full.name+" — $0.00 at the Signature Cyber Mega-Mall"),"https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/?product="+full.id);
     this.paintPlate(full.id);
   },
-  closeModal(){this.clearProductLD();document.getElementById("overlay").classList.remove("open");unlockScroll();var _h=mHome();mHead(_h.t,_h.d,_h.c);try{history.replaceState(null,"",_h.c)}catch(e){history.replaceState(null,"",location.pathname)}}
+  closeModal(){this.clearProductLD();document.getElementById("overlay").classList.remove("open");unlockScroll();var _h=mHome();mHead(_h.t,_h.d,_h.c);try{history.replaceState(null,"",_h.c)}catch(e){history.replaceState(null,"",location.pathname)}},
+  /* ============ Site #10 fix wave: raw record view + hash verification + reporting ============ */
+  canonJSON(p){const o={};Object.keys(p).sort().forEach(k=>{const v=p[k];o[k]=typeof v==="string"?v.normalize("NFC"):v});return JSON.stringify(o);},
+  async rawJSON(pid){
+    const box=document.getElementById("mraw");if(!box)return;
+    if(box._open){box.innerHTML="";box._open=false;return}
+    await this.ensureIdx();
+    const p=(this.idx||[]).find(x=>x.id===pid)||{};
+    if(!this.hashes){try{this.hashes=await(await fetch("data/products/hashes.json")).json()}catch(e){this.hashes={}}}
+    const canon=this.canonJSON(p), h=this.hashes[pid]||"unavailable";
+    box._canon=canon;
+    box.innerHTML=`<div class="jahrecord"><div class="jrp-meta"><b>CANONICAL RECORD</b> · SHA-256 <span style="font-family:monospace;word-break:break-all">${this.esc(h)}</span><br><button class="jrp-btn" onclick="Mall.verifyHash('${this.esc(pid)}')">VERIFY HASH</button> <span id="vhashres"></span></div><pre style="max-height:260px;overflow:auto;background:#05070f;border:1px solid #1c2745;border-radius:8px;padding:10px;font-size:.75em;white-space:pre-wrap;word-break:break-word">${this.esc(JSON.stringify(p,null,1))}</pre><div class="mbtns"><button class="btn go" onclick="Mall.copyRaw()">COPY JSON</button><button class="btn aud" onclick="Mall.dlRaw('${this.esc(pid)}')">DOWNLOAD JSON</button></div></div>`;
+    box._open=true;
+  },
+  async verifyHash(pid){
+    const res=document.getElementById("vhashres");if(!res)return;
+    try{
+      if(!this.hashes)this.hashes=await(await fetch("data/products/hashes.json")).json();
+      await this.ensureIdx();
+      const p=(this.idx||[]).find(x=>x.id===pid);
+      const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(this.canonJSON(p)));
+      const hex=[...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+      const ok=hex===this.hashes[pid];
+      res.textContent=ok?"✓ VERIFIED":"✗ MISMATCH";res.style.color=ok?"#4dff9d":"#ff5b5b";
+    }catch(e){res.textContent="verification unavailable";res.style.color="var(--dim)"}
+  },
+  copyRaw(){const t=(document.getElementById("mraw")||{})._canon||"";if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>toast("Record JSON copied."),()=>toast("Copy was blocked."))},
+  dlRaw(pid){const t=(document.getElementById("mraw")||{})._canon||"";const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:"application/json"}));a.download=pid+".json";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},600)},
+  report(pid){
+    const box=document.getElementById("mrep");if(!box)return;
+    if(box._open){box.innerHTML="";box._open=false;return}
+    const rid="MALL-REPORT-"+new Date().toISOString().slice(0,10).replace(/-/g,"")+"-"+String(Math.floor(1000+Math.random()*9000));
+    const cats=["wrong information","broken source","duplicate","wrong origin","wrong license","wrong price","wrong category","broken download","misleading description","outdated","other"];
+    box.innerHTML=`<div class="jahrecord"><div class="jrp-meta"><b>REPORT THIS PRODUCT</b> · ${rid} · saved on this device</div><div class="crow"><select id="repcat" aria-label="Report category">${cats.map(c=>`<option>${c}</option>`).join("")}</select> <button class="btn go" onclick="Mall.fileReport('${this.esc(pid)}','${rid}')">FILE REPORT</button></div><div id="repout" style="font-size:.8em;color:var(--dim);margin-top:6px"></div></div>`;
+    box._open=true;
+  },
+  fileReport(pid,rid){
+    const cat=(document.getElementById("repcat")||{}).value||"other";
+    const rec={report_id:rid,product_id:pid,report_type:cat,date:new Date().toISOString(),status:"filed_locally",resolution:"pending review"};
+    try{const k="mall_reports",all=JSON.parse(localStorage.getItem(k)||"[]");all.push(rec);localStorage.setItem(k,JSON.stringify(all))}catch(e){}
+    document.getElementById("mrep")._rec=rec;
+    const out=document.getElementById("repout");
+    if(out)out.innerHTML=`Filed <b>${this.esc(rid)}</b> (${this.esc(cat)}) — status: filed locally, pending review. <button class="jrp-btn" onclick="Mall.copyReport()">COPY REPORT</button>`;
+  },
+  copyReport(){const r=(document.getElementById("mrep")||{})._rec;if(r&&navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(JSON.stringify(r,null,1)).then(()=>toast("Report copied."),()=>toast("Copy was blocked."))}
 };
 /* ============ tiered read-aloud: same chain as the other 24 sites ============
    speechSynthesis (en-US female preferred) first; online tiers fail over
@@ -1015,7 +1104,12 @@ const Finder={
     const cards=scored.map(r=>
       `<div class="fcard"><div class="fnm"><b>${this.esc(r.p.n)}</b><br><span>${r.p.id} · ${this.esc(r.p.d)} · $0.00</span></div>`+
       `<button class="btn go" onclick="Mall.openProduct('${r.p.id}')">Take me there →</button></div>`).join("");
-    this.fsay(`Found <b>${scored.length}</b> for you — top pick first: 🛎${cards}`,"host");
+    this.fsay(`Found <b>${scored.length}</b> for you — top pick first: 🛎${cards}${this.provLine(q,scored.map(r=>r.p.id))}`,"host");
+  },
+  /* Site #10 fix wave: every Finder answer carries machine-readable provenance */
+  provLine(q,ids){
+    const c=Mall.counts, v=c?c.dataset_version:"unknown", h=c?String(c.inventory_sha256).slice(0,12):"unknown";
+    return `<div style="font-size:.72em;color:var(--dim);margin-top:6px">PROVENANCE · query: &ldquo;${this.esc(q)}&rdquo; · inventory: ${this.esc(v)} (${this.esc(h)}…) · matched: ${ids.map(id=>this.esc(id)).join(", ")||"none"} · ${new Date().toISOString()}</div>`;
   },
   // ---- follows you into the product modal: quick answers, data-grounded ----
   quick(kind){

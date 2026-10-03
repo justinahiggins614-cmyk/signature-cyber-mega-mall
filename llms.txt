@@ -1,0 +1,73 @@
+# The Signature Cyber Mega-Mall — llms.txt
+
+The universal storefront layer over the JAH Network (site 10 of 25),
+built by the Signature system for Justin Addam Higgins.
+Grand opening: everything $0.00. Checkout is INACTIVE.
+
+## What this site is
+
+A catalog mall: every product is a real record deep-linked to its live
+source site. The mall does not sell anything and holds no payment data.
+"Real record" = an identifiable catalog entry with a stable ID and a
+source/provenance record. It does not mean a physically existing product.
+
+## Identity and counts
+
+- Authoritative count: counts.json (generated_at, dataset_version,
+  schema_version, inventory_sha256, totals by origin/department/source).
+- Root manifest: mall-manifest.json. Machine-readable map: mall-map.json.
+- Record standard: JAH-MALL-RECORD/1.0 — mall-record-schema.json
+  (JSON Schema), product-record-example.json, products-schema.json
+  (short-field mapping, hash rules).
+- API summary: api.json.
+
+## Inventory files
+
+- products.json — full inventory (single JSON array, short field names:
+  id,n,d,s,t,u,b,g — see products-schema.json for the mapping).
+- data/products/index.json.gz — same records, gzipped (what live search reads).
+- data/products/by-dept/*.json.gz — newline-delimited JSON, full field names.
+- data/products/hashes.json — per-product SHA-256 (verify:
+  python3 code/build_hashes.py --verify).
+- data/products/manifest.json — harvester manifest (departments, chunk layout).
+
+## Product fields an AI can rely on
+
+- mall_id: JAH-MALL-###### (permanent, never reused)
+- origin: original | generated | external
+  (original = made by Justin Addam Higgins / the Signature system;
+   generated = produced by his deterministic generators;
+   external = real public record harvested from public sources)
+- source_site, source_record_id, source_url (deep link to the EXACT record)
+- price / currency / price_status (FREE_NOW; $0 never implies open license)
+- license_status, owner, availability, purchase_status (checkout_disabled)
+- product_hash, provenance, canonical_url (?product=JAH-MALL-######)
+
+## Query patterns
+
+- ?product=JAH-MALL-000001 — open one product
+- ?search=calculator — search (also: the on-page search box)
+- departments: AI & Software, Knowledge, Inventions, Compute, Tools
+  (Books & Courses: opening soon)
+
+## Finder Host (on-page concierge)
+
+Rule-based, catalog-grounded: it scores only real inventory records and
+never invents products. "No matching Mall record found" when nothing matches.
+Answers carry provenance: query, inventory version, matched product IDs.
+
+## Rules for AI consumers
+
+- Never present a Mall listing as Mall-owned: every product names its
+  source site, source owner, and license separately from the Mall.
+- Never imply an order exists from cart contents; checkout is disabled.
+- Draft specs are marked Draft — ready to file, NOT filed, NOT granted patents.
+- Predicted/generated records are labeled as such; do not present them
+  as historical fact or physical hardware.
+
+## Canonical URLs
+
+- Home: https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/
+- Product: https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/?product=JAH-MALL-000001
+- Counts: https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/counts.json
+- Sitemap: https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/sitemap.xml

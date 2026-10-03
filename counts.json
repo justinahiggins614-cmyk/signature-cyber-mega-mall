@@ -1,0 +1,44 @@
+{
+ "generated_at": "2026-10-03T13:49:30Z",
+ "dataset_version": "mall-harvest-2026-10-03",
+ "schema_version": "JAH-MALL-RECORD/1.0",
+ "inventory_version": "mall-harvest",
+ "inventory_snapshot": "2026-10-03",
+ "inventory_sha256": "c2e71469f023751df3a87f8455a46425921c59720c76cf36ff851be2a41eab1d",
+ "last_harvest": "2026-10-03",
+ "next_expected_harvest": "on demand — manual harvest; inventory regenerates when code/harvest_mall.py is re-run",
+ "total": 8821,
+ "by_origin": {
+  "original": 5614,
+  "external": 1707,
+  "generated": 1500
+ },
+ "by_dept": {
+  "AI & Software": 260,
+  "Knowledge": 2316,
+  "Inventions": 4504,
+  "Compute": 121,
+  "Tools": 1620
+ },
+ "by_src": {
+  "The Signature AI Telephone Book": 260,
+  "The Signature Dictionary": 2004,
+  "Signature Llama": 432,
+  "Signature Spec Catalog": 3004,
+  "Globally Rejustered Patent Catalog": 1500,
+  "The Signature PC System Depository": 121,
+  "Signature Universal Paradox Immune Calculator": 1500
+ },
+ "checkout": {
+  "enabled": false,
+  "payments_enabled": false,
+  "orders_enabled": false,
+  "cart_enabled": true,
+  "price_display": true
+ },
+ "price": {
+  "status": "FREE_NOW",
+  "price": 0,
+  "currency": "USD"
+ }
+}
