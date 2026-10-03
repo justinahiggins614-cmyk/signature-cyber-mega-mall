@@ -20,17 +20,69 @@ h1{color:#00f0ff;font-size:1.5em}h2{color:#ffcf4d;margin-top:1.6em}
 a{color:#9fc2ff}.meta{color:#8b98b8;font-size:.9em}.price{color:#4dff9d;font-weight:700}
 .nav{display:flex;justify-content:space-between;margin:18px 0;flex-wrap:wrap;gap:8px}
 ul{list-style:none;padding:0}li{margin:.35em 0}
-.top{border-bottom:1px solid #1c2745;padding-bottom:10px;margin-bottom:16px}"""
+.top{border-bottom:1px solid #1c2745;padding-bottom:10px;margin-bottom:16px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin:16px 0}
+.pcard{border:1px solid #1c2745;border-radius:10px;padding:12px;background:#0b1126}
+.pcard h3{margin:.1em 0;font-size:1em}
+.pcard h3 a{color:#fff}
+.pcard .sku{font-size:.72em;color:#8b98b8}
+.pcard .blurb{font-size:.85em;color:#d7e3ff}
+.pcard .price{color:#4dff9d;font-weight:700}"""
+
+def product_ld(item):
+    return {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": item["n"],
+        "sku": item["id"],
+        "description": item.get("b", ""),
+        "url": BASE + "?product=" + item["id"],
+        "brand": {"@type": "Brand", "name": "The Signature Cyber Mega-Mall"},
+        "creator": {"@type": "Person", "name": "Justin Addam Higgins"},
+        "category": item["d"],
+        "offers": {"@type": "Offer", "price": "0.00", "priceCurrency": "USD",
+                   "availability": "https://schema.org/InStock"},
+    }
+
+def itemlist_ld(items):
+    return {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "Featured products",
+        "itemListElement": [
+            {"@type": "ListItem", "position": i + 1, "item": product_ld(p)}
+            for i, p in enumerate(items)
+        ],
+    }
+
+def featured_cards(items):
+    out = []
+    for p in items:
+        out.append(
+            '<div class="pcard" itemscope itemtype="https://schema.org/Product">'
+            f'<div class="sku" itemprop="sku">{p["id"]}</div>'
+            f'<h3><a href="../?product={p["id"]}" itemprop="url">'
+            f'<span itemprop="name">{html.escape(p["n"])}</span></a></h3>'
+            f'<p class="blurb" itemprop="description">{html.escape(p.get("b", ""))}</p>'
+            f'<div><span class="price">$0.00</span> <span class="meta" itemprop="category">'
+            f'{html.escape(p["d"])}</span></div>'
+            f'<div style="display:none" itemprop="brand" itemscope itemtype="https://schema.org/Brand">'
+            f'<span itemprop="name">The Signature Cyber Mega-Mall</span></div></div>'
+        )
+    return '<div class="cards">\n' + "\n".join(out) + "\n</div>"
 
 def slug(d):
     return d.lower().replace(" ", "-").replace("&", "and")
 
-def page(title, desc, body, canon):
+def page(title, desc, body, canon, ld=None):
+    ldtag = ('<script type="application/ld+json">%s</script>\n' % json.dumps(ld)
+             if ld else "")
     return ("<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n"
             "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n"
             f"<title>{html.escape(title)}</title>\n"
             f"<meta name=\"description\" content=\"{html.escape(desc)}\">\n"
             f"<link rel=\"canonical\" href=\"{canon}\">\n"
+            + ldtag +
             f"<style>{CSS}</style>\n</head>\n<body>\n<div class=\"wrap\">\n{body}\n</div>\n</body>\n</html>\n")
 
 def li(r):
@@ -76,13 +128,18 @@ def main():
         sl = slug(d)
         dept_pages.append((d, sl, len(items)))
         lis = "\n".join(li(r) for r in items)
+        featured = items[:24]
         body = (f'<div class="top">{crumb}\n<h1>{html.escape(d)} \u2014 {len(items):,} products</h1>\n'
                 f"<p>Every product in this department, all <b>$0.00</b> for the grand opening. "
-                f"Each link opens the product's full page at its permanent link.</p></div>\n<ul>\n{lis}\n</ul>")
+                f"Each link opens the product's full page at its permanent link.</p></div>\n"
+                f"<h2>Featured {html.escape(d)} products</h2>\n"
+                f"{featured_cards(featured)}\n"
+                f"<h2>All {html.escape(d)} products</h2>\n<ul>\n{lis}\n</ul>")
         with open(os.path.join(OUT, f"dept-{sl}.html"), "w") as f:
             f.write(page(f"Signature Cyber Mega-Mall \u2014 {d}",
                          f"{len(items):,} {d} products at the Signature Cyber Mega-Mall \u2014 all $0.00.",
-                         body, BASE+f"browse/dept-{sl}.html"))
+                         body, BASE+f"browse/dept-{sl}.html",
+                         ld=itemlist_ld(featured)))
 
     # departments index
     ditems = "\n".join(

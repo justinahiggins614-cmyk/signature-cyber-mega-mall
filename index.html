@@ -100,6 +100,10 @@ background-size:44px 44px}
 .mapcap{color:var(--dim);font-size:.85em;text-align:center;margin-top:8px}
 /* per-product YOU ARE HERE strip */
 .youarehere{margin:10px 0;padding:10px 14px;border:1px solid var(--gd);border-radius:10px;background:#1a1206aa;color:var(--gd);font-weight:700;letter-spacing:.03em;font-size:.92em;line-height:1.6}
+/* catalog-listing vs commercial-product distinction */
+.catnote{margin:10px 0;padding:10px 14px;border:1px dashed var(--cy);border-radius:10px;background:#0a1428aa;color:var(--txt);font-size:.88em;line-height:1.6}
+/* browse-only note beside the cart */
+.browsenote{color:var(--dim);font-size:.78em;letter-spacing:.04em;align-self:center;white-space:nowrap}
 .youarehere .yah-star{color:#ff3b3b;text-shadow:0 0 12px #ff3b3b;margin-right:6px}
 /* make-it-yours personalization */
 .custom{margin-top:16px;border:1px dashed var(--mg);border-radius:12px;padding:14px;background:#160a18}
@@ -121,6 +125,22 @@ background-size:44px 44px}
 .gnote{border:1px solid var(--am);border-radius:12px;padding:12px 16px;margin:12px 0;background:#161006;color:var(--txt);font-size:.92em}
 /* product grid */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:14px}
+@media (max-width:480px){.grid{grid-template-columns:1fr}}
+@media (min-width:481px) and (max-width:768px){.grid{grid-template-columns:repeat(2,1fr)}}
+/* Site #10 diagnostic FIX-04: 44px minimum tap targets on all product triggers */
+button,.btn,.mbtn,.fchip,.readbtn,.az button,#morebtn,.close,.rm{min-height:44px}
+.readbtn{padding:10px 14px}
+.card .row button{min-height:44px}
+/* Site #10 diagnostic FIX-05: sticky department navigation bar */
+.deptnav{position:sticky;top:60px;z-index:44;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;background:#04060df2;border:1px solid var(--line);border-radius:10px;padding:8px;margin:12px 0}
+.deptnav button{background:var(--card);border:1px solid var(--line);color:var(--dim);border-radius:999px;padding:8px 14px;cursor:pointer;font-size:.85em}
+.deptnav button.on{background:#0e2a44;color:var(--cy);border-color:var(--cy);font-weight:700}
+#matchcount{font-size:.82em;color:var(--dim);white-space:nowrap}
+/* Site #10 diagnostic FIX-06: toast notifications + cart badge pulse */
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#0a0f22;border:1px solid var(--cy);color:var(--txt);padding:12px 22px;border-radius:12px;z-index:10002;font-size:.92em;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:92vw;text-align:center;box-shadow:0 8px 30px #00f0ff33}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@keyframes cartpulse{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+.cartbtn.pulse{animation:cartpulse .45s ease}
 .card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .12s,box-shadow .12s}
 .card:hover{transform:translateY(-3px);box-shadow:0 10px 28px #00f0ff26;border-color:var(--cy)}
 .card .art{width:100%;aspect-ratio:1/1;display:block;background:#04060d}
@@ -138,7 +158,7 @@ background-size:44px 44px}
 .readbtn{background:none;border:1px solid var(--cy);color:var(--cy);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.78em;font-weight:700;white-space:nowrap}
 .readbtn:hover{background:#0e2a44}
 .btn.aud{background:#0a1c33;border-color:var(--cy);color:var(--cy)}
-/* floating read-aloud bar (same tiered-TTS chain as the other nine sites) */
+/* floating read-aloud bar (same tiered-TTS chain as the other 24 sites) */
 #aubar{position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:9999;
 background:#0a0f22;border:1px solid var(--cy);border-radius:10px;
 padding:10px 14px;display:flex;gap:10px;align-items:center;
@@ -208,9 +228,10 @@ footer .wrap p{max-width:900px}
 <a class="mbtn" href="#browse" onclick="document.getElementById('q').focus()">SEARCH</a>
 <a class="mbtn" href="#mallguide">MALL MAP &amp; GUIDE</a>
 <a class="mbtn cartbtn" href="javascript:void(0)" onclick="Cart.open()">CART (<span id="cartcount">0</span>)</a>
+<span class="browsenote">browse only — purchasing is not active</span>
 </div>
 <div class="hero">
-<p class="mallname">Site 10 of 12 · The Universal Storefront Layer</p>
+<p class="mallname">Site 10 of 25 · The Universal Storefront Layer</p>
 <h1>SIGNATURE CYBER <span class="mg">MEGA-MALL</span></h1>
 <div class="grand">Grand Opening — Everything FREE · $0.00</div>
 <p>One mall over the whole JAH Network: AI &amp; software, knowledge, inventions, compute and tools — every product on the shelf is a real record deep-linked to its live source site. No login. No checkout yet. Take everything.</p>
@@ -230,8 +251,10 @@ footer .wrap p{max-width:900px}
 </section>
 <section class="sec" id="browse">
 <h2>Browse the Shelves <span class="sub">Search, filter, A–Z — counts come live from the inventory index</span></h2>
+<div class="deptnav" id="deptnav" aria-label="Department navigation"></div>
 <div class="toolbar">
 <input type="search" id="q" placeholder="Search products — name, description, record ID…" aria-label="Search products">
+<span id="matchcount" aria-live="polite"></span>
 <span id="fchips" style="display:contents"></span>
 </div>
 <div class="finder" id="finder">
@@ -333,13 +356,13 @@ var _mhome=null;
 function mHome(){if(!_mhome){var md=document.querySelector('meta[name="description"]'),cl=document.querySelector('link[rel="canonical"]');_mhome={t:document.title,d:md?md.getAttribute("content"):"",c:cl?cl.getAttribute("href"):"https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/"}}return _mhome}
 function mHead(title,desc,canon){var h=mHome();document.title=title||h.t;var md=document.querySelector('meta[name="description"]');if(md)md.setAttribute("content",desc||h.d);var cl=document.querySelector('link[rel="canonical"]');if(cl)cl.setAttribute("href",canon||h.c)}
 const Mall={
-  manifest:null, idx:null, deptCache:{}, shown:0, pageSize:60,
+  manifest:null, idx:null, deptCache:{}, shown:0, pageSize:60, searchDone:false,
   curDept:"all", curLetter:"", curQuery:"",
   slug:d=>d.toLowerCase().replace(/ /g,"-").replace(/&/g,"and"),
   esc:s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),
   async boot(){
     try{this.manifest=await(await fetch("data/products/manifest.json")).json()}catch(e){}
-    this.renderCounts();this.renderChips();this.renderEntryMap();this.renderFloors();this.renderAZ();
+    this.renderCounts();this.renderChips();this.renderDeptNav();this.renderEntryMap();this.renderFloors();this.renderAZ();
     this.bindUI();
     this.renderGuide();
     Finder.greet();
@@ -357,6 +380,7 @@ const Mall={
   },
   renderFloors(){
     const m=this.manifest,el=document.getElementById("floordir");
+    if(!m){el.innerHTML='<p style="color:var(--am)">Mall directory unavailable — the inventory index didn\u2019t load. Check your connection and reload the page.</p>';return}
     document.getElementById("floorsub").textContent=m.depts.length+" floors · pick a department to enter";
     const desc={"AI & Software":"Talkable AIs, system minds and domain assistants from the Telephone Book.",
       "Knowledge":"Dictionary words and LLM terms from the Dictionary and Signature Llama.",
@@ -383,6 +407,24 @@ const Mall={
       el.querySelectorAll("button").forEach(x=>x.classList.remove("on"));c.classList.add("on");
       this.enterDept(c.dataset.f);
     });
+  },
+  /* Site #10 diagnostic FIX-05: sticky department navigation bar (drives enterDept) */
+  renderDeptNav(){
+    const el=document.getElementById("deptnav");if(!el)return;
+    const m=this.manifest;
+    const depts=m?m.depts.filter(d=>(m.by_dept[d]||0)>0):[];
+    const mk=(label,dept,on)=>`<button data-d="${this.esc(dept)}" class="${on?"on":""}">${this.esc(label)}</button>`;
+    el.innerHTML=mk("All departments","all",this.curDept==="all"||!this.curDept)+
+      depts.map(d=>mk(d+" ("+(m.by_dept[d]||0).toLocaleString()+")",d,this.curDept===d)).join("");
+    el.querySelectorAll("button").forEach(b=>b.onclick=()=>{
+      el.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+      this.enterDept(b.dataset.d);
+    });
+    azTop();
+  },
+  syncDeptNav(){
+    const el=document.getElementById("deptnav");if(!el)return;
+    el.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.d===(this.curDept||"all")));
   },
   // deterministic mall location for a product: floor = dept index+1, aisle = hash of product id
   mallLoc(pid,dept){
@@ -451,6 +493,7 @@ const Mall={
     s+=`</svg>`;return s;
   },
   renderEntryMap(){
+    if(!this.manifest){document.getElementById("entrymapsvg").innerHTML='<p style="color:var(--am)">Mall map unavailable — the inventory index didn\u2019t load. Check your connection and reload the page.</p>';return}
     document.getElementById("entrymapsvg").innerHTML=this.mapSVG(false);
   },
   async ensureIdx(){
@@ -569,9 +612,10 @@ const Mall={
   async enterDept(dept){
     this.curDept=dept;this.curLetter="";this.curQuery="";document.getElementById("q").value="";
     document.querySelectorAll(".fchip").forEach(x=>x.classList.toggle("on",x.dataset.f.replace("&amp;","&")===dept));
+    this.syncDeptNav();
     document.getElementById("az").querySelectorAll("button").forEach((b,i)=>b.classList.toggle("on",i===0));
     this.grid=[];this.shown=0;document.getElementById("morewrap").style.display="";
-    this.grid=await this.deptProducts(dept);this.render(true);
+    this.grid=await this.deptProducts(dept);this.searchDone=true;this.render(true);
     document.getElementById("browse").scrollIntoView({behavior:"smooth"});
   },
   async search(reset){
@@ -585,26 +629,62 @@ const Mall={
       (!L||p.n.toUpperCase().startsWith(L))&&
       (!q||p.n.toLowerCase().includes(q)||(p.b||"").toLowerCase().includes(q)||p.id.toLowerCase().includes(q)||(p.g||"").toLowerCase().includes(q))
     ).slice(0,900);
-    this.render(true);
+    this.searchDone=true;this.render(true);
   },
   more(){this.render(false)},
   cardHTML(p){
-    return `<div class="card" onclick="Mall.openProduct('${p.id}')">
+    return `<div class="card" itemscope itemtype="https://schema.org/Product" onclick="Mall.openProduct('${p.id}')">
     <div class="art">${svgArt(p.g||p.seed||p.id,p.d||p.dept)}</div>
-    <div class="body"><div class="sku">${p.id} · ${this.esc(p.d||p.dept)}</div>
-    <h4>${this.esc(p.n||p.name)}</h4>
-    <div class="meta"><span class="stype ${p.t||p.stype}">${p.t||p.stype}</span>${this.esc(p.s||p.src)}</div>
+    <div class="body"><div class="sku" itemprop="sku">${p.id} · ${this.esc(p.d||p.dept)}</div>
+    <h4 itemprop="name">${this.esc(p.n||p.name)}</h4>
+    <div class="meta" itemprop="category"><span class="stype ${p.t||p.stype}">${p.t||p.stype}</span>${this.esc(p.s||p.src)}</div>
+    <meta itemprop="brand" content="The Signature Cyber Mega-Mall">
     <div class="row"><span class="price">$0.00<s>GRAND OPENING</s></span><button class="readbtn" onclick="event.stopPropagation();Aud.readById('${p.id}')" title="Read this product aloud">&#128266; READ</button><span style="color:var(--cy);font-size:.85em">Details →</span></div>
     </div></div>`;
   },
+  /* Site #10 diagnostic FIX-01: per-product JSON-LD Product schema on the detail view */
+  paintProductLD(full){
+    this.clearProductLD();
+    var ld={"@context":"https://schema.org","@type":"Product","name":full.name,"sku":full.id,
+      "description":full.blurb||("Product "+full.id+" at the Signature Cyber Mega-Mall — $0.00 grand opening."),
+      "url":"https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/?product="+full.id,
+      "brand":{"@type":"Brand","name":"The Signature Cyber Mega-Mall"},
+      "creator":{"@type":"Person","name":"Justin Addam Higgins"},
+      "category":full.dept,
+      "offers":{"@type":"Offer","price":"0.00","priceCurrency":"USD","availability":"https://schema.org/InStock"}};
+    var s=document.createElement("script");s.type="application/ld+json";s.id="product-ld";
+    s.textContent=JSON.stringify(ld);document.head.appendChild(s);
+  },
+  clearProductLD(){var old=document.getElementById("product-ld");if(old&&old.parentNode)old.parentNode.removeChild(old)},
   render(reset){
     const grid=document.getElementById("grid");
     if(reset){grid.innerHTML="";this.shown=0}
     const slice=this.grid.slice(this.shown,this.shown+this.pageSize);
     grid.insertAdjacentHTML("beforeend",slice.map(p=>this.cardHTML(p)).join(""));
     this.shown+=slice.length;
-    document.getElementById("noresults").style.display=this.grid.length?"none":"block";
+    document.getElementById("noresults").style.display=(this.searchDone&&!this.grid.length)?"block":"none";
     document.getElementById("morewrap").style.display=this.shown>=this.grid.length?"none":"";
+    const mc=document.getElementById("matchcount");
+    if(mc)mc.textContent=!this.searchDone?"searching inventory…":(this.grid.length?this.grid.length.toLocaleString()+" match"+(this.grid.length===1?"":"es"):"no matches");
+  },
+  /* Site #10 fold-in: what each product IS, per source site */
+  kindOf(src){
+    var map={
+      "Signature Spec Catalog":["Draft specification","Draft — ready to file · NOT filed · NOT a granted patent"],
+      "The Signature Dictionary":["Dictionary word record","Original IWB definition with pronunciation, word history, and usage"],
+      "Globally Rejustered Patent Catalog":["Public patent record","Real public patent, harvested from public sources"],
+      "Signature Universal Paradox Immune Calculator":["Solved equation record","Deterministic solved-equation record"],
+      "Signature Llama":["LLM term / tool-library record","Model documentation record"],
+      "The Signature AI Telephone Book":["AI profile","AI file record — dial, chat, and download the AI's standalone file"],
+      "The Signature PC System Depository":["Computer system record","System file record with specs and simulators"]
+    };
+    return map[src]||["Catalog record","Catalog record"];
+  },
+  stypeNote(t){
+    var map={"original":"original — made by Justin Addam Higgins / the Signature system",
+      "generated":"generated — produced by his deterministic generators",
+      "external":"external — real public record harvested from public sources"};
+    return map[t]||t;
   },
   async openProduct(pid){
     if(!this.idx){try{this.idx=JSON.parse(await gz("data/products/index.json.gz"))}catch(e){}}
@@ -630,8 +710,13 @@ const Mall={
     <div class="frow"><input id="hq" maxlength="140" placeholder="Ask about this product…" aria-label="Ask the finder host about this product"><button class="btn go" onclick="Finder.hostAsk()">ASK</button></div>
     </div>
     <p class="blurb">${this.esc(full.blurb)||"No description — open the source record for the full file."}</p>
+    <div class="catnote">📋 <b>CATALOG LISTING</b> — this is a catalog item, not a commercial product page. The product record itself lives on its source site (link below). Nothing is sold here; the mall is a storefront layer over the 25-site JAH Network.</div>
     <dl class="kv">
     <dt>Department</dt><dd>${this.esc(full.dept)}</dd>
+    <dt>What it is</dt><dd>${this.esc(this.kindOf(full.src)[0])}</dd>
+    <dt>Source site</dt><dd>${this.esc(full.src)} — <a class="btn go" href="${this.esc(full.url)}" target="_blank" rel="noopener">OPEN SOURCE RECORD ↗</a></dd>
+    <dt>Record status</dt><dd>${this.esc(this.stypeNote(full.stype))} · ${this.esc(this.kindOf(full.src)[1])}</dd>
+    <dt>What you get</dt><dd>The full record on the source site: read it, copy it, download it, run its demos, and use its AI. This mall page is the catalog card — everything it points to is <b>$0.00</b> during the grand opening.</dd>
     <dt>Price</dt><dd><span class="price">$0.00</span> — grand opening, everything free</dd>
     <dt>Source record</dt><dd>${this.esc(full.sid)}</dd>
     <dt>Checkout</dt><dd style="color:var(--am)">Inactive — credit-card payments held until the site goes active.</dd>
@@ -649,6 +734,7 @@ const Mall={
     <div id="custplate"></div>
     </div>
     <p style="font-size:.78em;color:var(--dim);margin-top:12px">Deep link: <span style="color:#9fc2ff">?product=${full.id}</span> · share it anywhere.</p>`;
+    this.paintProductLD(full);
     document.getElementById("overlay").classList.add("open");lockScroll();
     history.replaceState(null,"","?product="+full.id);
     Finder.cur={full:full,loc:loc};
@@ -657,9 +743,9 @@ const Mall={
     mHead(full.name+" — Signature Cyber Mega-Mall",(full.blurb||full.name+" — $0.00 at the Signature Cyber Mega-Mall"),"https://justinahiggins614-cmyk.github.io/signature-cyber-mega-mall/?product="+full.id);
     this.paintPlate(full.id);
   },
-  closeModal(){document.getElementById("overlay").classList.remove("open");unlockScroll();var _h=mHome();mHead(_h.t,_h.d,_h.c);try{history.replaceState(null,"",_h.c)}catch(e){history.replaceState(null,"",location.pathname)}}
+  closeModal(){this.clearProductLD();document.getElementById("overlay").classList.remove("open");unlockScroll();var _h=mHome();mHead(_h.t,_h.d,_h.c);try{history.replaceState(null,"",_h.c)}catch(e){history.replaceState(null,"",location.pathname)}}
 };
-/* ============ tiered read-aloud: same chain as the other nine sites ============
+/* ============ tiered read-aloud: same chain as the other 24 sites ============
    speechSynthesis (en-US female preferred) first; online tiers fail over
    ResponsiveVoice -> Google translate_tts -> Google translate.googleapis.com.
    Text is chunked for mobile; code-like content is stripped. Google TTS sends
@@ -904,6 +990,13 @@ const Aud={
     else{auShowBar(true);auPaintBtn();fxStart(AU.label+". "+text);audMsg("This browser has no built-in voice — reading with the online voice instead.")}
   }
 };
+/* Site #10 diagnostic FIX-06: animated toast notifications */
+function toast(msg){
+  var t=document.getElementById("malltoast");
+  if(!t){t=document.createElement("div");t.id="malltoast";t.className="toast";document.body.appendChild(t)}
+  t.textContent=msg;t.classList.add("show");
+  clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove("show")},2400);
+}
 /* ============ cart (checkout hooks present but INACTIVE) ============ */
 const Cart={
   items:[], // product ids
@@ -911,13 +1004,15 @@ const Cart={
   save(){localStorage.setItem("mallcart",JSON.stringify(this.items))},
   async add(pid){
     if(!this.items.includes(pid))this.items.push(pid);
-    this.save();this.render();this.open();
+    this.save();this.render();toast("Added to cart — "+pid);this.open();
   },
-  remove(pid){this.items=this.items.filter(x=>x!==pid);this.save();this.render()},
+  remove(pid){this.items=this.items.filter(x=>x!==pid);this.save();this.render();toast("Removed from cart — "+pid)},
   open(){document.getElementById("drawer").classList.add("open");var sc=document.getElementById("drscrim");if(sc)sc.classList.add("on");lockScroll()},
   close(){document.getElementById("drawer").classList.remove("open");var sc=document.getElementById("drscrim");if(sc)sc.classList.remove("on");unlockScroll()},
   async render(){
     document.getElementById("cartcount").textContent=this.items.length;
+    var cc=document.querySelector(".cartbtn");
+    if(cc){cc.classList.remove("pulse");void cc.offsetWidth;cc.classList.add("pulse");setTimeout(function(){cc.classList.remove("pulse")},500)}
     const box=document.getElementById("cartitems");
     if(!this.items.length){box.innerHTML="<p style='color:var(--dim)'>Cart is empty — everything is $0.00, so fill it up.</p>";return}
     if(!Mall.idx){try{Mall.idx=JSON.parse(await gz("data/products/index.json.gz"))}catch(e){}}
@@ -937,7 +1032,7 @@ var _scrollLocks=0;
 function lockScroll(){_scrollLocks++;document.body.style.overflow="hidden"}
 function unlockScroll(){_scrollLocks=Math.max(0,_scrollLocks-1);if(!_scrollLocks)document.body.style.overflow=""}
 (function(){
-  function azTop(){var bm=document.querySelector(".bigmenu"),az=document.getElementById("az");if(bm&&az)az.style.top=bm.offsetHeight+"px"}
+  function azTop(){var bm=document.querySelector(".bigmenu"),dn=document.getElementById("deptnav"),az=document.getElementById("az");if(bm&&az)az.style.top=((bm.offsetHeight||0)+(dn?dn.offsetHeight+20:0))+"px"}
   function mobStat(){var sd=document.querySelector(".statdrop");if(sd&&window.matchMedia&&window.matchMedia("(max-width:767px)").matches)sd.removeAttribute("open")}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){azTop();mobStat()});else{azTop();mobStat()}
   window.addEventListener("resize",azTop);
