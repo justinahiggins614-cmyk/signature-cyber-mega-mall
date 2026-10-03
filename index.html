@@ -152,6 +152,22 @@ button,.btn,.mbtn,.fchip,.readbtn,.az button,#morebtn,.close,.rm{min-height:44px
 .stype.original{background:#0b3b2e;color:var(--gr);border:1px solid var(--gr)}
 .stype.generated{background:#2b2a08;color:var(--gd);border:1px solid var(--gd)}
 .stype.external{background:#2b1a08;color:var(--am);border:1px solid var(--am)}
+/* NETWORK 10-FIX consistency layer (additive, 2026-10-03) */
+.jahstatus{display:inline-block;font-size:.72em;letter-spacing:.18em;font-weight:700;color:#0a0f1e;
+  background:var(--gd);border-radius:3px;padding:2px 9px;margin:6px 8px 6px 0}
+.jahstatus.gen{background:var(--gd);color:#2b2a08}
+.jahstatus.sim{background:#b48cff;color:#141021}
+.jahstatus.pub{background:var(--gr);color:#0b3b2e}
+.jahprov{font-size:.78em;color:var(--dim);margin:8px 0 2px;letter-spacing:.02em}
+.jahrecord{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:10px 0;background:#0a0f1c;font-size:.8em;color:var(--txt)}
+.jahrecord .jrp-meta{color:var(--dim);margin:4px 0 8px;font-size:.92em}
+.jahrecord .jrp-meta b{color:var(--gd);font-weight:700;letter-spacing:.08em}
+.jahrecord .jrp-row{display:flex;flex-wrap:wrap;gap:6px}
+.jrp-btn{background:#101a30;border:1px solid var(--cy);color:var(--cy);border-radius:6px;
+  padding:7px 12px;font-size:.85em;cursor:pointer;text-decoration:none;display:inline-block}
+.jrp-btn:hover{background:#16223d}
+.jah-aiid{border-left:3px solid var(--cy);background:#0a1220;padding:8px 12px;margin:8px 0;font-size:.82em;color:var(--txt)}
+.jah-aiid b{color:var(--gd);letter-spacing:.06em;font-weight:700}
 .price{font-size:1.15em;font-weight:800;color:var(--gr)}
 .price s{color:var(--dim);font-weight:400;font-size:.75em;margin-left:6px}
 .card .row{display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:6px}
@@ -259,6 +275,7 @@ footer .wrap p{max-width:900px}
 </div>
 <div class="finder" id="finder">
 <div class="fhead"><span class="fhost">🛎</span><div><b>FINDER HOST</b><span>your mall concierge — describe what you're looking for in plain words</span></div></div>
+<div class="jah-aiid" role="note" aria-label="AI identity card"><b>AI IDENTITY</b> · <b>Name:</b> Finder Host · <b>Duties:</b> walks shoppers to the right shelf from plain-words descriptions; answers product questions from the product’s own page · <b>Engine:</b> on-page rule-based responder — no external model, no invented results</div>
 <div class="flog" id="flog" aria-live="polite"></div>
 <div class="frow"><input id="fq" maxlength="140" placeholder="Describe what you're looking for…" aria-label="Ask the finder host"><button class="btn go" onclick="Finder.ask()">ASK</button></div>
 <div class="fchips" id="fchips"></div>
@@ -637,10 +654,38 @@ const Mall={
     <div class="art">${svgArt(p.g||p.seed||p.id,p.d||p.dept)}</div>
     <div class="body"><div class="sku" itemprop="sku">${p.id} · ${this.esc(p.d||p.dept)}</div>
     <h4 itemprop="name">${this.esc(p.n||p.name)}</h4>
-    <div class="meta" itemprop="category"><span class="stype ${p.t||p.stype}">${p.t||p.stype}</span>${this.esc(p.s||p.src)}</div>
+    <div class="meta" itemprop="category"><span class="stype ${p.t||p.stype}">${this.stypeBadge(p.t||p.stype)}</span>${this.esc(p.s||p.src)}</div>
     <meta itemprop="brand" content="The Signature Cyber Mega-Mall">
     <div class="row"><span class="price">$0.00<s>GRAND OPENING</s></span><button class="readbtn" onclick="event.stopPropagation();Aud.readById('${p.id}')" title="Read this product aloud">&#128266; READ</button><span style="color:var(--cy);font-size:.85em">Details →</span></div>
     </div></div>`;
+  },
+  shareProduct: function(pid){
+    var url = location.origin + location.pathname + "?product=" + pid;
+    if (navigator.share){ navigator.share({title: document.title, url: url}).catch(function(){}); }
+    else if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(url); toast("Product link copied."); }
+  },
+  copyProduct: function(pid){
+    var p = (this.idx||[]).filter(function(x){ return x.id === pid; })[0] || {};
+    var t = (p.n||"") + " (" + pid + ")\n" +
+      "Department: " + (p.d||"") + "\n" +
+      "Source: " + (p.s||"") + " " + MID + " record " + (p.g||"") + "\n" +
+      "Price: $0.00\n" +
+      "Link: " + location.origin + location.pathname + "?product=" + pid;
+    if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(t); toast("Product copied."); }
+  },
+  downloadProduct: function(pid){
+    var p = (this.idx||[]).filter(function(x){ return x.id === pid; })[0] || {};
+    var t = "SIGNATURE CYBER MEGA-MALL " + EMD + " PRODUCT EXPORT\n" +
+      "Product: " + (p.n||"") + "\nID: " + pid + "\n" +
+      "Department: " + (p.d||"") + "\nSource site: " + (p.s||"") + "\nSource record: " + (p.g||"") + "\n" +
+      "Price: $0.00 (grand opening)\n" +
+      (p.b ? "\n" + p.b + "\n" : "") +
+      "\nSource record: " + (p.u||"") + "\n";
+    var b = new Blob([t], {type: "text/plain"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(b); a.download = pid + ".txt";
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 800);
   },
   /* Site #10 diagnostic FIX-01: per-product JSON-LD Product schema on the detail view */
   paintProductLD(full){
@@ -680,10 +725,14 @@ const Mall={
     };
     return map[src]||["Catalog record","Catalog record"];
   },
+  stypeBadge(t){
+    var map={"original":"SIGNATURE ORIGINAL","generated":"GENERATED","external":"PUBLIC RECORD"};
+    return map[t]||t;
+  },
   stypeNote(t){
-    var map={"original":"original — made by Justin Addam Higgins / the Signature system",
-      "generated":"generated — produced by his deterministic generators",
-      "external":"external — real public record harvested from public sources"};
+    var map={"original":"SIGNATURE ORIGINAL — made by Justin Addam Higgins / the Signature system",
+      "generated":"GENERATED — produced by his deterministic generators",
+      "external":"PUBLIC RECORD — real public record harvested from public sources"};
     return map[t]||t;
   },
   async openProduct(pid){
@@ -697,10 +746,21 @@ const Mall={
     document.getElementById("mbody").innerHTML=`
     <button class="close" onclick="Mall.closeModal()">✕ CLOSE</button>
     <div class="sku">${full.id}</div><h3>${this.esc(full.name)}</h3>
-    <div class="meta"><span class="stype ${full.stype}">${full.stype}</span><span style="color:var(--dim);font-size:.85em">${this.esc(full.src)}</span></div>
+    <div class="meta"><span class="stype ${full.stype}">${this.stypeBadge(full.stype)}</span><span style="color:var(--dim);font-size:.85em">${this.esc(full.src)}</span></div>
+    <div class="jahrecord">
+    <div class="jrp-meta"><b>ID</b> ${this.esc(full.id)} · <b>VERSION</b> mall-harvest · <b>SOURCE</b> ${this.esc(full.src)}</div>
+    <div class="jrp-row">
+    <a class="jrp-btn" href="${this.esc(full.url)}" target="_blank" rel="noopener">OPEN</a>
+    <button class="jrp-btn" onclick="Mall.shareProduct('${full.id}')">SHARE</button>
+    <button class="jrp-btn" onclick="Mall.copyProduct('${full.id}')">COPY</button>
+    <button class="jrp-btn" onclick="Mall.downloadProduct('${full.id}')">DOWNLOAD</button>
+    <button class="jrp-btn" onclick="Aud.readById('${full.id}')">READ ALOUD</button></div>
+    <div class="jahprov">PROVENANCE · Harvested by the Mega-Mall harvester (mall-harvest) from ${this.esc(full.src)} · ${this.esc((Mall.manifest&&Mall.manifest.harvested)||"")}</div>
+    </div>
     <div class="youarehere"><span class="yah-star">★</span>YOU ARE HERE — in mall: <b>${this.esc(full.dept)}</b> · Floor <b>F${loc.floor}</b> · Aisle <b>${loc.aisle}</b></div>
     <div class="hostbubble">
     <div class="hrow"><span class="fhost">🛎</span><div><b>FINDER HOST</b><span>Need help with this one? Ask me anything about it — I follow you anywhere in the mall.</span></div></div>
+    <div class="jah-aiid" role="note" aria-label="AI identity card"><b>AI IDENTITY</b> · <b>Name:</b> Finder Host · <b>Duties:</b> answers from this product’s own page only · <b>Engine:</b> on-page rule-based responder — no external model</div>
     <div class="hbtns">
     <button class="fchip" onclick="Finder.quick('where')">📍 Where is it?</button>
     <button class="fchip" onclick="Finder.quick('what')">📝 What is it?</button>
@@ -715,7 +775,7 @@ const Mall={
     <dt>Department</dt><dd>${this.esc(full.dept)}</dd>
     <dt>What it is</dt><dd>${this.esc(this.kindOf(full.src)[0])}</dd>
     <dt>Source site</dt><dd>${this.esc(full.src)} — <a class="btn go" href="${this.esc(full.url)}" target="_blank" rel="noopener">OPEN SOURCE RECORD ↗</a></dd>
-    <dt>Record status</dt><dd>${this.esc(this.stypeNote(full.stype))} · ${this.esc(this.kindOf(full.src)[1])}</dd>
+    <dt>Record status</dt><dd>${this.esc(this.stypeNote(full.stype))}${full.stype==="external" ? " " + this.esc("(public record " + MID + " harvested from " + full.src + " " + MID + " the record" + RSQ + "s owner is named on the source record)") : ""} · ${this.esc(this.kindOf(full.src)[1])}</dd>
     <dt>What you get</dt><dd>The full record on the source site: read it, copy it, download it, run its demos, and use its AI. This mall page is the catalog card — everything it points to is <b>$0.00</b> during the grand opening.</dd>
     <dt>Price</dt><dd><span class="price">$0.00</span> — grand opening, everything free</dd>
     <dt>Source record</dt><dd>${this.esc(full.sid)}</dd>
@@ -940,7 +1000,7 @@ const Finder={
     const c=this.cur;if(!c)return;
     const f=c.full,l=c.loc,E=this.esc.bind(this);
     if(kind==="where")this.hsay(`Right here! You're looking at it: <b>${E(f.dept)}</b> · Floor <b>F${l.floor}</b> · Aisle <b>${E(l.aisle)}</b>. 📍`,"host");
-    else if(kind==="what")this.hsay(`<b>${E(f.name)}</b>. ${E(f.blurb)||"No description on file — open the source record for the full file."} <span style="color:var(--dim)">Type: ${E(f.stype)}.</span>`,"host");
+    else if(kind==="what")this.hsay(`<b>${E(f.name)}</b>. ${E(f.blurb)||"No description on file — open the source record for the full file."} <span style="color:var(--dim)">Type: ${E(Mall.stypeBadge(f.stype))}.</span>`,"host");
     else if(kind==="price")this.hsay(`It's <b>$0.00</b> — grand opening, everything in the mall is free right now. 💲`,"host");
   },
   async hostAsk(){
@@ -954,7 +1014,7 @@ const Finder={
     if(/price|cost|how much|free|\$/.test(t))a=`It's <b>$0.00</b> — grand opening, everything in the mall is free right now.`;
     else if(/where|location|aisle|floor|shelf|locate|find it|find this/.test(t))a=`You're looking at it: <b>${E(f.dept)}</b> · Floor <b>F${l.floor}</b> · Aisle <b>${E(l.aisle)}</b>.`;
     else if(/what is|what's|describe|description|about this|about it|info/.test(t))a=`<b>${E(f.name)}</b>. ${E(f.blurb)||"No description on file — open the source record for the full file."}`;
-    else if(/source|record|where.*from|who made|made by|original/.test(t))a=`Source: <b>${E(f.src)}</b> · record <b>${E(f.sid)}</b> · type <b>${E(f.stype)}</b>.`;
+    else if(/source|record|where.*from|who made|made by|original/.test(t))a=`Source: <b>${E(f.src)}</b> · record <b>${E(f.sid)}</b> · type <b>${E(Mall.stypeBadge(f.stype))}</b>.`;
     else if(/\bid\b|sku|product id|product number/.test(t))a=`Product ID: <b>${E(f.id)}</b>.`;
     else if(/department|dept/.test(t))a=`It lives in the <b>${E(f.dept)}</b> department, Floor <b>F${l.floor}</b>.`;
     else if(/buy|checkout|pay|purchase|order|cart/.test(t))a=`Checkout is inactive — credit-card payments are held until the site goes active. For now, everything is $0.00.`;

@@ -4,6 +4,7 @@ Samples REAL records from Manon's existing site clones and emits
 JAH-MALL-###### product records. Deterministic: sorted (dept, source, sid)
 ordering => stable IDs across runs. No invented source records."""
 import json, gzip, glob, os, math, html
+from datetime import date
 from urllib.parse import quote
 
 W = os.path.expanduser('~/workspace')
@@ -180,7 +181,7 @@ def main():
             with gzip.open(os.path.join(dept_dir, f'{slug(d)}-c{ci:05d}.json.gz'), 'wt') as f:
                 for rec in dre[ci * CHUNK:(ci + 1) * CHUNK]:
                     f.write(json.dumps(rec, ensure_ascii=False) + '\n')
-    manifest = {'generated': 'mall-harvest', 'count': n, 'chunks': math.ceil(n / CHUNK),
+    manifest = {'generated': 'mall-harvest', 'harvested': date.today().isoformat(), 'count': n, 'chunks': math.ceil(n / CHUNK),
                 'per_chunk': CHUNK, 'depts': DEPTS,
                 'by_dept': {d: sum(1 for p in uniq if p['dept'] == d) for d in DEPTS},
                 'by_src': {SRC[k][0]: sum(1 for p in uniq if p['src_key'] == k) for k in SRC}}
