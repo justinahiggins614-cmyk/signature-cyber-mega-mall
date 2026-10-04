@@ -245,6 +245,7 @@ html[data-theme="dark"] img,html[data-theme="dark"] video,html[data-theme="dark"
 #jah-theme-toggle:hover{opacity:1}
 </style>
 <script src="js/jah-talk-fallback.js"></script>
+<script src="js/covers.js"></script>
 </head>
 <body>
 <div class="jah-hero-slim" style="max-height:200px;overflow:hidden"><img src="assets/hero-mall-giraffe.jpg" alt="Friendly giraffe mascot waving at the entrance of the neon cyber mega-mall" style="display:block;width:100%;height:200px;object-fit:cover"></div>
@@ -777,7 +778,7 @@ const Mall={
   more(){this.render(false)},
   cardHTML(p){
     return `<div class="card" itemscope itemtype="https://schema.org/Product" onclick="Mall.openProduct('${p.id}')">
-    <div class="art">${svgArt(p.g||p.seed||p.id,p.d||p.dept)}</div>
+    <div class="art">${window.Covers?Covers.svg({id:p.id,title:p.n||p.name,dept:p.d||p.dept}):svgArt(p.g||p.seed||p.id,p.d||p.dept)}</div>
     <div class="body"><div class="sku" itemprop="sku">${p.id} · ${this.esc(p.d||p.dept)}</div>
     <h4 itemprop="name">${this.esc(p.n||p.name)}</h4>
     <div class="meta" itemprop="category"><span class="stype ${p.t||p.stype}">${this.stypeBadge(p.t||p.stype)}</span>${this.esc(p.s||p.src)}</div>
@@ -882,7 +883,7 @@ const Mall={
     const full={id:p.id,name:p.n,dept:p.d,src:p.s,stype:p.t,sid:p.g,url:p.u,blurb:p.b,seed:p.g};
     const loc=this.mallLoc(full.id,full.dept);
     const saved=this.custStore()[full.id];
-    document.getElementById("mart").innerHTML=svgArt(full.seed,full.dept,true);
+    document.getElementById("mart").innerHTML=window.Covers?Covers.svg({id:full.id,title:full.name,dept:full.dept,wide:true}):svgArt(full.seed,full.dept,true);
     document.getElementById("mbody").innerHTML=`
     <button class="close" onclick="Mall.closeModal()">✕ CLOSE</button>
     <div class="sku">${full.id}</div><h3>${this.esc(full.name)}</h3>

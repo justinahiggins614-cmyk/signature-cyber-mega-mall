@@ -53,6 +53,9 @@ background-size:44px 44px}
 .sresults{display:grid;gap:10px;margin-top:8px}
 /* product rows */
 .prow{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card)}
+.prow .covthumb{width:120px;flex:0 0 120px;border-radius:8px;overflow:hidden;background:#04060d;border:1px solid var(--line);align-self:flex-start}
+.prow .covthumb svg{display:block;width:100%;height:auto}
+.covph{display:flex;align-items:center;justify-content:center;min-height:90px;color:#57d0e6;font-size:1.4em}
 .prow .pname{color:#fff;font-weight:700;text-decoration:none;font-size:1em}
 .prow .pname:hover{color:var(--cy);text-decoration:underline}
 .prow .ploc{color:var(--gd);font-size:.83em;margin-top:4px}
@@ -249,6 +252,7 @@ document.getElementById("jah-askai-q").addEventListener("keydown",function(e){if
 <footer>
 <p>Built by the Signature system for Justin Addam Higgins. Every product deep-links to its live source record · <a href="index.html" style="color:#9fc2ff">mall entrance</a> · <a href="sitemap.xml" style="color:#9fc2ff">sitemap</a></p>
 </footer>
+<script src="js/covers.js"></script>
 <script>
 "use strict";
 /* Product Archive — lazy A–Z shelves. Never loads the whole catalog at once. */
@@ -263,13 +267,15 @@ function mallLoc(pid,dept){
 }
 function rowHTML(p){
   const loc=mallLoc(p.id,p.d);
-  return '<div class="prow">'
+  const cov=(window.Covers?Covers.thumb({id:p.id,title:p.n,dept:p.d}):"");
+  return '<div class="prow"><div style="display:flex;gap:12px;align-items:flex-start">'+cov
+  +'<div style="min-width:0;flex:1">'
   +'<a class="pname" href="index.html?product='+esc(p.id)+'">'+esc(p.n)+'</a>'
   +'<div class="ploc"><span class="yah">★</span> you are here (in mall '+esc(p.d)+' · Floor F'+esc(loc.floor)+' · Aisle '+esc(loc.aisle)+')</div>'
   +'<div class="pmeta"><span class="sku">'+esc(p.id)+'</span> · Storefront: '+esc(p.s||"Signature Mall")+' · <span class="price">$0.00</span></div>'
   +(p.b?'<div class="pblurb">'+esc(p.b)+'</div>':'')
   +(p.u?'<div class="psrc"><a href="'+esc(p.u)+'" target="_blank" rel="noopener">source record ↗</a></div>':'')
-  +'</div>';
+  +'</div></div></div>';
 }
 var bucketCache={};
 async function loadBucket(deptSlug,letter,file,container,deptName){
@@ -283,6 +289,7 @@ async function loadBucket(deptSlug,letter,file,container,deptName){
     const html=j.rows.map(rowHTML).join("");
     bucketCache[key]=html;
     container.innerHTML=html||'<p class="loadmsg">This shelf is empty.</p>';
+    if(window.Covers)Covers.lazy(container);
   }catch(e){
     container.innerHTML="";
     const p=document.createElement("p");p.className="errmsg";
@@ -368,12 +375,15 @@ function onSearch(){
       st.textContent=hits.length.toLocaleString()+" match"+(hits.length===1?"":"es")+' for "'+q+'"';
       box.innerHTML=hits.map(function(r){
         const loc=mallLoc(r[0],r[2]);
-        return '<div class="prow">'
+        return '<div class="prow"><div style="display:flex;gap:12px;align-items:flex-start">'
+        +(window.Covers?Covers.thumb({id:r[0],title:r[1],dept:r[2]}):"")
+        +'<div style="min-width:0;flex:1">'
         +'<a class="pname" href="index.html?product='+esc(r[0])+'">'+esc(r[1])+'</a>'
         +'<div class="ploc"><span class="yah">★</span> you are here (in mall '+esc(r[2])+' · Floor F'+esc(loc.floor)+' · Aisle '+esc(loc.aisle)+')</div>'
         +'<div class="pmeta"><span class="sku">'+esc(r[0])+'</span> · <span class="price">$0.00</span></div>'
-        +'</div>';
+        +'</div></div></div>';
       }).join("");
+      if(window.Covers)Covers.lazy(box);
     }catch(e){
       st.textContent="Search couldn't load — check your connection and try again.";
     }
