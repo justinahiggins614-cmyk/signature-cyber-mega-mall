@@ -27,7 +27,47 @@ ul{list-style:none;padding:0}li{margin:.35em 0}
 .pcard h3 a{color:#fff}
 .pcard .sku{font-size:.72em;color:#8b98b8}
 .pcard .blurb{font-size:.85em;color:#d7e3ff}
-.pcard .price{color:#4dff9d;font-weight:700}"""
+.pcard .price{color:#4dff9d;font-weight:700}
+.jahnet{background:#04060d;color:#9aa4b2;font-size:.74em;padding:7px 10px;text-align:center;line-height:2.1;letter-spacing:.02em;border-top:1px solid #1c2745;margin-top:28px}
+.jahnet-t{color:#ffcf4d;font-weight:700;letter-spacing:.25em;margin-right:10px}
+.jahnet a{color:#9fc2ff;text-decoration:none;margin:0 6px;white-space:nowrap}
+.jahnet a:hover{text-decoration:underline}
+.jahnet .here{color:#00f0ff;font-weight:700;margin:0 6px;border:1px solid #00f0ff;border-radius:6px;padding:1px 8px;white-space:nowrap}"""
+
+# THE JAH NETWORK nav — bottom of every generated browse page, above the footer.
+# Single instance per page; current site only as the YOU ARE HERE pill; site 5 = JAH-N Wiki Leaks.
+SITES = [
+    ("signature-math/", "1 Signature Math"),
+    ("jah-calculator/", "2 Signature Universal Paradox Immune Calculator"),
+    ("jah-dictionary/", "3 The Signature Dictionary"),
+    ("jah-wiki/", "4 JAH Wiki"),
+    ("jah-n-wiki-leaks/", "5 JAH-N Wiki Leaks"),
+    ("signature-llama/", "6 Signature Llama: The Fully Cyber Utilizable AI"),
+    ("jah-ai-models/", "7 The Signature AI Phone Book"),
+    ("cyber-patent-catalog/", "8 Globally Rejustered Patent Catalog"),
+    ("signature-one-archive/specs.html", "9 Signature Spec Catalog Pending Patents"),
+    ("jah-computer-systems/", "10 The Signature PC System Depository"),
+    ("signature-books/", "11 The Signature Book Depository"),
+    ("signature-comics/", "12 The Signature Comic Store"),
+    ("signature-newspapers/", "13 The Signature Global Newspaper Archive"),
+    ("signature-backend/", "14 The Signature AI Mad Scientist Creation Lab"),
+    ("signature-boundless-generators/", "15 The Signature Boundless Generator Archive"),
+    ("signature-ai-mixlab/", "16 The Signature AI Mix Lab"),
+    ("signature-ai-olypics/", "17 AI Olympics"),
+    ("signature-chip-maker/", "18 The Signature Computer Chip Maker and Archive"),
+    ("signature-app-archive/", "19 The Signature App Archive"),
+    ("signature-ai-robot-matcher/", "20 The Signature AI Robot Matcher"),
+    ("signature-experiment-solver/", "21 The Signature Experiment Solver"),
+    ("signature-ai-image-video-maker/", "22 Signature AI Pixel"),
+    ("signature-ai-song-maker/", "23 Signature Music Studio"),
+    ("signature-fixit/", "24 The Signature Mr Fix-It"),
+    ("signature-university/", "25 The Signature University"),
+    ("signature-3d-print/", "27 The Signature 3D Print Mega Mall"),
+]
+NAV = ('<nav aria-label="JAH Network Global Ecosystem" role="navigation">'
+       '<div class="jahnet"><span class="jahnet-t">THE JAH NETWORK</span>' +
+       "".join(f'<a href="https://justinahiggins614-cmyk.github.io/{p}">{html.escape(n)}</a>' for p, n in SITES) +
+       '<span class="here">26 The Signature Cyber Mega-Mall — YOU ARE HERE</span></div></nav>')
 
 def product_ld(item):
     return {
@@ -83,7 +123,7 @@ def page(title, desc, body, canon, ld=None):
             f"<meta name=\"description\" content=\"{html.escape(desc)}\">\n"
             f"<link rel=\"canonical\" href=\"{canon}\">\n"
             + ldtag +
-            f"<style>{CSS}</style>\n</head>\n<body>\n<div class=\"wrap\">\n{body}\n</div>\n</body>\n</html>\n")
+            f"<style>{CSS}</style>\n</head>\n<body>\n<div class=\"wrap\">\n{body}\n</div>\n{NAV}\n</body>\n</html>\n")
 
 def li(r):
     return (f'<li><a href="../?product={r["id"]}">{html.escape(r["n"])}</a> '
