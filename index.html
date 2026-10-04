@@ -265,6 +265,7 @@ paint();})();
 <a class="mbtn" href="#entrymap">🗺 ENTRY MAP</a>
 <a class="mbtn" href="#browse" onclick="document.getElementById('q').focus()">SEARCH</a>
 <a class="mbtn" href="#mallguide">MALL MAP &amp; GUIDE</a>
+<a class="mbtn" href="javascript:void(0)" onclick="MallTour.start()">✦ TOUR</a>
 <a class="mbtn cartbtn" href="javascript:void(0)" onclick="Cart.open()">CART (<span id="cartcount">0</span>)</a>
 <span class="browsenote">browse only — purchasing is not active</span>
 </div>
@@ -301,7 +302,7 @@ paint();})();
 <div class="jah-aiid" role="note" aria-label="AI identity card"><b>AI IDENTITY</b> · <b>Name:</b> Finder Host · <b>Duties:</b> walks shoppers to the right shelf from plain-words descriptions; answers product questions from the product’s own page · <b>Engine:</b> on-page rule-based responder — no external model, no invented results</div>
 <div class="flog" id="flog" aria-live="polite"></div>
 <div class="frow"><input id="fq" maxlength="140" placeholder="Describe what you're looking for…" aria-label="Ask the finder host"><button class="btn go" onclick="Finder.ask()">ASK</button></div>
-<div class="fchips" id="fchips"></div>
+<div class="fchips" id="finderchips"></div>
 </div>
 <div class="az" id="az"></div>
 <div class="grid" id="grid"></div>
@@ -382,6 +383,14 @@ function svgArt(seed,dept,wide){
   p+=`<g stroke="${col}" stroke-width="3" opacity=".9"><path d="M${m} ${m+L}V${m}H${m+L}"/><path d="M${W-m-L} ${m}H${W-m}V${m+L}"/><path d="M${m} ${H-m-L}V${H-m}H${m+L}"/><path d="M${W-m-L} ${H-m}H${W-m}V${H-m-L}"/></g>`;
   p+=`</svg>`;return p;
 }
+/* Site 26 fix wave: azTop MUST be global — Mall.renderDeptNav() calls it during
+   boot(). (It used to live only inside the bottom IIFE, so boot() threw a
+   ReferenceError and the shelf/floors/map/guide never rendered.) */
+function azTop(){var bm=document.querySelector(".bigmenu"),dn=document.getElementById("deptnav"),az=document.getElementById("az");if(bm&&az)az.style.top=((bm.offsetHeight||0)+(dn?dn.offsetHeight+20:0))+"px"}
+/* Site 26 fix wave: punctuation constants used by copy/download/record-status —
+   they were referenced but never defined, so DOWNLOAD, COPY, and the detail
+   view of every "external" product threw a ReferenceError. */
+const EMD="\u2014", MID="\u00B7", RSQ="\u2019";
 /* ============ mall engine ============
    GZIP LOADING: GitHub Pages serves .json.gz as Content-Type: application/gzip
    with NO Content-Encoding, so fetch().text() returns raw gzip binary and
@@ -582,11 +591,21 @@ const Mall={
   },
   async renderGuide(){
     const m=this.manifest,body=document.getElementById("guidebody");
-    if(!m){body.innerHTML='<p style="color:var(--dim)">Guide offline — inventory index not loaded.</p>';return}
-    await this.ensureIdx();
+    /* Site 26 fix wave: explicit loading → ready / error → retry (never a stuck "Guide loading…") */
+    if(!m){body.innerHTML='<p style="color:var(--dim)">Guide offline — the inventory index didn\u2019t load. <button class="fchip" onclick="Mall.renderGuide()">↻ RETRY</button></p>';return}
+    body.innerHTML='<p style="color:var(--dim)" role="status">🗺 Loading the mall guide…</p>';
+    let ds={};
+    try{
+      await this.ensureIdx();
+      if(!this.idx.length)throw new Error("empty index");
+      ds=this.deptSources();
+    }catch(e){
+      body.innerHTML='<p style="color:var(--am)">The mall guide couldn\u2019t load the inventory index. <button class="fchip" onclick="Mall.renderGuide()">↻ RETRY</button></p>';
+      return;
+    }
     document.getElementById("guidemapsvg").innerHTML=this.mapSVG(true);
-    const ds=this.deptSources();
-    let h=`<div class="gnote">🗺 <b>Welcome to the mall.</b> This whole website is laid out like a 1980s–90s shopping mall: you came in the <b style="color:#ff3b3b">main entrance ★ (YOU ARE HERE)</b>, and every floor above is a department full of storefronts. Tap any store on the map to walk in. Everything costs <b>$0.00</b> — grand opening, take it all.</div>`;
+    let h=`<div style="margin:4px 0 12px"><button class="btn go" onclick="MallTour.start()">✦ START THE 1-MINUTE TOUR</button></div>`;
+    h+=`<div class="gnote">🗺 <b>Welcome to the mall.</b> This whole website is laid out like a 1980s–90s shopping mall: you came in the <b style="color:#ff3b3b">main entrance ★ (YOU ARE HERE)</b>, and every floor above is a department full of storefronts. Tap any store on the map to walk in. Everything costs <b>$0.00</b> — grand opening, take it all.</div>`;
     h+=`<h3 style="color:var(--cy);letter-spacing:.1em;margin:18px 0 6px">THE FLOORS</h3>`;
     h+=m.depts.map((d,i)=>{
       const c=m.by_dept[d]||0,soon=c===0;
@@ -656,7 +675,7 @@ const Mall={
   renderAZ(){
     const el=document.getElementById("az");
     el.innerHTML=`<button class="on" data-l="">#</button>`+"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(l=>`<button data-l="${l}">${l}</button>`).join("");
-    el.querySelectorAll("button").forEach(b=>b.onclick=()=>{el.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");this.curLetter=b.dataset.l;this.search(true)});
+    el.querySelectorAll("button").forEach(b=>b.onclick=()=>{el.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");this.curLetter=b.dataset.l;this.userSearched=true;this.search(true)});
   },
   bindUI(){
     const q=document.getElementById("q");let t;
@@ -801,7 +820,13 @@ const Mall={
   async openProduct(pid){
     if(!this.idx){try{this.idx=JSON.parse(await gz("data/products/index.json.gz"))}catch(e){}}
     const p=(this.idx||[]).find(x=>x.id===pid);
-    if(!p){return}
+    /* Site 26 fix wave: a deep link to a product that isn't on the shelf gets an
+       honest "record unavailable" message + the full shelf, never a dead page */
+    if(!p){
+      toast("That product isn\u2019t on the shelf — the record is unavailable. Showing the full shelves instead.");
+      try{history.replaceState(null,"",location.pathname)}catch(e){}
+      this.enterDept("all");return;
+    }
     const full={id:p.id,name:p.n,dept:p.d,src:p.s,stype:p.t,sid:p.g,url:p.u,blurb:p.b,seed:p.g};
     const loc=this.mallLoc(full.id,full.dept);
     const saved=this.custStore()[full.id];
@@ -1074,7 +1099,7 @@ const Finder={
   greet(){
     this.fsay("Hi there! I'm your <b>finder host</b> — this mall has thousands of products, so just describe what you're looking for in plain words and I'll walk you to the right shelf. 🛎","host");
     const chips=["a gift for a kid","something to learn","computer gear","kitchen helper","funny present"];
-    document.getElementById("fchips").innerHTML=chips.map(c=>
+    document.getElementById("finderchips").innerHTML=chips.map(c=>
       `<button class="fchip" onclick="Finder.chip(${JSON.stringify(c)})">${this.esc(c)}</button>`).join("");
     const fq=document.getElementById("fq");
     fq.addEventListener("keydown",e=>{if(e.key==="Enter")this.ask()});
@@ -1208,7 +1233,7 @@ var _scrollLocks=0;
 function lockScroll(){_scrollLocks++;document.body.style.overflow="hidden"}
 function unlockScroll(){_scrollLocks=Math.max(0,_scrollLocks-1);if(!_scrollLocks)document.body.style.overflow=""}
 (function(){
-  function azTop(){var bm=document.querySelector(".bigmenu"),dn=document.getElementById("deptnav"),az=document.getElementById("az");if(bm&&az)az.style.top=((bm.offsetHeight||0)+(dn?dn.offsetHeight+20:0))+"px"}
+  /* azTop is defined globally now (see above); the resize/DOMContentLoaded hooks reuse it */
   function mobStat(){var sd=document.querySelector(".statdrop");if(sd&&window.matchMedia&&window.matchMedia("(max-width:767px)").matches)sd.removeAttribute("open")}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){azTop();mobStat()});else{azTop();mobStat()}
   window.addEventListener("resize",azTop);
@@ -1295,6 +1320,91 @@ var iv=setInterval(function(){
 window.addEventListener("load",function(){setTimeout(doScroll,900);});
 }catch(e){}
 })();
+</script>
+<script>
+/* ============ Site 26 usability wave: first-time spotlight tour ============
+   1-minute tour: entry map, floors, dept shortcuts, search, product card, cart.
+   WHAT / WHAT-IT-DOES / HOW per step. localStorage "jah-tour-seen-mall",
+   Start/Skip, Next/Back, Esc + arrow keys, 44px+ touch targets, never blocks
+   content (no full-screen scrim). Theme untouched — reuses the mall palette. */
+const MallTour={
+  steps:[
+    {sel:"#entrymap",tag:"STOP 1 · ENTRY MAP",
+     body:"<b>WHAT:</b> the mall's front door — a live directory map of every floor.<br><b>WHAT IT DOES:</b> every glowing storefront is a real department shelf.<br><b>HOW:</b> tap any storefront to walk straight into that department."},
+    {sel:"#floors",tag:"STOP 2 · MALL DIRECTORY",
+     body:"<b>WHAT:</b> one card per department (floor), each stamped with its live product count.<br><b>WHAT IT DOES:</b> ENTER FLOOR opens that department's shelves.<br><b>HOW:</b> tap ENTER FLOOR on any card."},
+    {sel:"#deptnav",tag:"STOP 3 · DEPARTMENT SHORTCUTS",
+     body:"<b>WHAT:</b> a sticky shortcut bar listing every stocked department.<br><b>WHAT IT DOES:</b> jumps the shelves to that department instantly.<br><b>HOW:</b> tap a department pill."},
+    {sel:"#q",tag:"STOP 4 · SEARCH",
+     body:"<b>WHAT:</b> searches all 8,821 products by name, description, or record ID (try JAH-MALL-000123).<br><b>WHAT IT DOES:</b> filters the shelves live as you type; the A–Z bar and origin chips narrow it further.<br><b>HOW:</b> type in the search box — clear it to see the whole shelf again."},
+    {sel:"#grid .card",tag:"STOP 5 · PRODUCT CARD",
+     body:"<b>WHAT:</b> every card is a real record from a JAH Network site.<br><b>WHAT IT DOES:</b> opens the full product page — source-record link, copy/download, read aloud, cart, and a personalized name plate.<br><b>HOW:</b> tap any card."},
+    {sel:".cartbtn",tag:"STOP 6 · CART",
+     body:"<b>WHAT:</b> your shopping cart.<br><b>WHAT IT DOES:</b> holds products you want to take. Everything is $0.00 — checkout stays disabled until the site goes active.<br><b>HOW:</b> tap CART in the top menu."}
+  ],
+  i:0,
+  btn(ghost){return "min-height:44px;min-width:44px;padding:10px 18px;border-radius:10px;font-weight:800;cursor:pointer;font-size:.9em;"+(ghost?"background:none;border:1px solid var(--line);color:var(--dim)":"background:#0e2a44;border:1px solid var(--cy);color:var(--cy)")},
+  start(){this.i=0;try{localStorage.setItem("jah-tour-seen-mall","1")}catch(e){}this.show()},
+  show(){
+    this.clear();
+    const st=this.steps[this.i], total=this.steps.length;
+    const t=st.sel?document.querySelector(st.sel):null;
+    const tip=document.createElement("div");tip.id="malltour-tip";
+    tip.setAttribute("role","dialog");tip.setAttribute("aria-label","Mall tour: "+st.tag);
+    tip.style.cssText="position:fixed;z-index:10005;max-width:min(92vw,380px);background:#0a0f22;border:2px solid var(--cy);border-radius:14px;padding:16px 18px;color:var(--txt);font-size:.92em;box-shadow:0 0 40px #00f0ff66";
+    tip.innerHTML='<div style="color:var(--cy);font-weight:800;letter-spacing:.12em;font-size:.8em;margin-bottom:8px">'+st.tag+" · "+(this.i+1)+" of "+total+"</div>"
+      +'<div style="line-height:1.6;margin-bottom:12px">'+st.body+"</div>"
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
+      +(this.i>0?'<button data-t="back" style="'+this.btn()+'">← BACK</button>':"")
+      +(this.i<total-1?'<button data-t="next" style="'+this.btn()+'">NEXT →</button>':'<button data-t="end" style="'+this.btn()+'">FINISH ✓</button>')
+      +'<button data-t="end" style="'+this.btn(true)+'">SKIP TOUR</button></div>'
+      +'<div style="margin-top:8px;font-size:.75em;color:var(--dim)">Esc closes · ← → move between stops</div>';
+    document.body.appendChild(tip);
+    let r=null;
+    try{if(t){const b=t.getBoundingClientRect();r={x:b.left,y:b.top,w:b.width,h:b.height}}}catch(e){}
+    if(r&&r.w>0){
+      const hl=document.createElement("div");hl.id="malltour-hl";
+      hl.style.cssText="position:fixed;z-index:10004;border:3px solid var(--mg);border-radius:12px;box-shadow:0 0 30px #ff2fb388;pointer-events:none;left:"+Math.max(4,r.x-8)+"px;top:"+Math.max(4,r.y-8)+"px;width:"+(r.w+16)+"px;height:"+(r.h+16)+"px";
+      document.body.appendChild(hl);
+      try{t.scrollIntoView({block:"center",behavior:"smooth"})}catch(e){}
+      const tw=tip.offsetWidth||340, th=tip.offsetHeight||260;
+      let x=Math.min(Math.max(12,r.x),Math.max(12,window.innerWidth-tw-12)), y=r.y+r.h+18;
+      if(y+th>window.innerHeight-12)y=Math.max(12,r.y-th-18);
+      tip.style.left=x+"px";tip.style.top=Math.max(12,y)+"px";
+    }else{tip.style.left="50%";tip.style.top="12%";tip.style.transform="translateX(-50%)"}
+    const self=this;
+    tip.querySelectorAll("button").forEach(function(b){b.addEventListener("click",function(){const a=b.getAttribute("data-t");if(a==="next"){self.i++;self.show()}else if(a==="back"){self.i--;self.show()}else self.end()})});
+  },
+  clear(){["malltour-tip","malltour-hl","malltour-prompt"].forEach(function(id){const e=document.getElementById(id);if(e&&e.parentNode)e.parentNode.removeChild(e)})},
+  end(){this.clear();try{localStorage.setItem("jah-tour-seen-mall","1")}catch(e){}},
+  prompt(){
+    const already=document.getElementById("malltour-prompt");
+    if(already&&already.innerHTML)return;
+    const p=document.createElement("div");p.id="malltour-prompt";
+    p.setAttribute("role","dialog");p.setAttribute("aria-label","First visit prompt");
+    p.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:10005;background:#0a0f22;border:2px solid var(--gd);border-radius:14px;padding:14px 18px;color:var(--txt);font-size:.92em;max-width:94vw;box-shadow:0 8px 30px #ffcf4d55;text-align:center";
+    p.innerHTML='🗺 <b>First time at the mall?</b> Take the 1-minute spotlight tour.<div style="display:flex;gap:8px;justify-content:center;margin-top:10px"><button data-t="go" style="'+this.btn()+'">START TOUR</button><button data-t="no" style="'+this.btn(true)+'">SKIP</button></div>';
+    document.body.appendChild(p);
+    const self=this;
+    p.querySelectorAll("button").forEach(function(b){b.addEventListener("click",function(){self.clear();if(b.getAttribute("data-t")==="go")self.start();else self.end()})});
+  },
+  maybe(){
+    let seen=false;try{seen=!!localStorage.getItem("jah-tour-seen-mall")}catch(e){seen=true}
+    if(seen)return;
+    const self=this;let n=0;
+    const iv=setInterval(function(){n++;
+      const ready=(typeof Mall!=="undefined"&&Mall.manifest&&document.getElementById("floordir")&&document.getElementById("floordir").children.length>0);
+      if(ready||n>60){clearInterval(iv);if(ready)self.prompt()}
+    },500);
+  }
+};
+document.addEventListener("keydown",function(e){
+  if(!document.getElementById("malltour-tip"))return;
+  if(e.key==="Escape")MallTour.end();
+  else if(e.key==="ArrowRight"&&MallTour.i<MallTour.steps.length-1){MallTour.i++;MallTour.show()}
+  else if(e.key==="ArrowLeft"&&MallTour.i>0){MallTour.i--;MallTour.show()}
+});
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){MallTour.maybe()});else MallTour.maybe();
 </script>
 </body>
 </html>
