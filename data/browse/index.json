@@ -1,0 +1,656 @@
+{
+ "generated_at": "2026-10-04T05:03:09Z",
+ "total": 8821,
+ "depts": [
+  {
+   "dept": "AI & Software",
+   "slug": "ai-and-software",
+   "floor": 1,
+   "count": 260,
+   "letters": [
+    {
+     "letter": "A",
+     "count": 9,
+     "file": "ai-and-software-a.json"
+    },
+    {
+     "letter": "B",
+     "count": 23,
+     "file": "ai-and-software-b.json"
+    },
+    {
+     "letter": "C",
+     "count": 23,
+     "file": "ai-and-software-c.json"
+    },
+    {
+     "letter": "D",
+     "count": 12,
+     "file": "ai-and-software-d.json"
+    },
+    {
+     "letter": "E",
+     "count": 9,
+     "file": "ai-and-software-e.json"
+    },
+    {
+     "letter": "F",
+     "count": 16,
+     "file": "ai-and-software-f.json"
+    },
+    {
+     "letter": "G",
+     "count": 9,
+     "file": "ai-and-software-g.json"
+    },
+    {
+     "letter": "H",
+     "count": 13,
+     "file": "ai-and-software-h.json"
+    },
+    {
+     "letter": "I",
+     "count": 5,
+     "file": "ai-and-software-i.json"
+    },
+    {
+     "letter": "J",
+     "count": 4,
+     "file": "ai-and-software-j.json"
+    },
+    {
+     "letter": "K",
+     "count": 5,
+     "file": "ai-and-software-k.json"
+    },
+    {
+     "letter": "L",
+     "count": 9,
+     "file": "ai-and-software-l.json"
+    },
+    {
+     "letter": "M",
+     "count": 15,
+     "file": "ai-and-software-m.json"
+    },
+    {
+     "letter": "N",
+     "count": 8,
+     "file": "ai-and-software-n.json"
+    },
+    {
+     "letter": "O",
+     "count": 2,
+     "file": "ai-and-software-o.json"
+    },
+    {
+     "letter": "P",
+     "count": 28,
+     "file": "ai-and-software-p.json"
+    },
+    {
+     "letter": "R",
+     "count": 8,
+     "file": "ai-and-software-r.json"
+    },
+    {
+     "letter": "S",
+     "count": 30,
+     "file": "ai-and-software-s.json"
+    },
+    {
+     "letter": "T",
+     "count": 15,
+     "file": "ai-and-software-t.json"
+    },
+    {
+     "letter": "U",
+     "count": 2,
+     "file": "ai-and-software-u.json"
+    },
+    {
+     "letter": "V",
+     "count": 4,
+     "file": "ai-and-software-v.json"
+    },
+    {
+     "letter": "W",
+     "count": 10,
+     "file": "ai-and-software-w.json"
+    },
+    {
+     "letter": "Y",
+     "count": 1,
+     "file": "ai-and-software-y.json"
+    }
+   ]
+  },
+  {
+   "dept": "Knowledge",
+   "slug": "knowledge",
+   "floor": 2,
+   "count": 2316,
+   "letters": [
+    {
+     "letter": "#",
+     "count": 2,
+     "file": "knowledge-#.json"
+    },
+    {
+     "letter": "A",
+     "count": 30,
+     "file": "knowledge-a.json"
+    },
+    {
+     "letter": "B",
+     "count": 185,
+     "file": "knowledge-b.json"
+    },
+    {
+     "letter": "C",
+     "count": 198,
+     "file": "knowledge-c.json"
+    },
+    {
+     "letter": "D",
+     "count": 128,
+     "file": "knowledge-d.json"
+    },
+    {
+     "letter": "E",
+     "count": 186,
+     "file": "knowledge-e.json"
+    },
+    {
+     "letter": "F",
+     "count": 180,
+     "file": "knowledge-f.json"
+    },
+    {
+     "letter": "G",
+     "count": 16,
+     "file": "knowledge-g.json"
+    },
+    {
+     "letter": "H",
+     "count": 13,
+     "file": "knowledge-h.json"
+    },
+    {
+     "letter": "I",
+     "count": 11,
+     "file": "knowledge-i.json"
+    },
+    {
+     "letter": "J",
+     "count": 136,
+     "file": "knowledge-j.json"
+    },
+    {
+     "letter": "K",
+     "count": 36,
+     "file": "knowledge-k.json"
+    },
+    {
+     "letter": "L",
+     "count": 18,
+     "file": "knowledge-l.json"
+    },
+    {
+     "letter": "M",
+     "count": 189,
+     "file": "knowledge-m.json"
+    },
+    {
+     "letter": "N",
+     "count": 4,
+     "file": "knowledge-n.json"
+    },
+    {
+     "letter": "O",
+     "count": 14,
+     "file": "knowledge-o.json"
+    },
+    {
+     "letter": "P",
+     "count": 359,
+     "file": "knowledge-p.json"
+    },
+    {
+     "letter": "Q",
+     "count": 3,
+     "file": "knowledge-q.json"
+    },
+    {
+     "letter": "R",
+     "count": 18,
+     "file": "knowledge-r.json"
+    },
+    {
+     "letter": "S",
+     "count": 367,
+     "file": "knowledge-s.json"
+    },
+    {
+     "letter": "T",
+     "count": 198,
+     "file": "knowledge-t.json"
+    },
+    {
+     "letter": "U",
+     "count": 4,
+     "file": "knowledge-u.json"
+    },
+    {
+     "letter": "V",
+     "count": 7,
+     "file": "knowledge-v.json"
+    },
+    {
+     "letter": "W",
+     "count": 10,
+     "file": "knowledge-w.json"
+    },
+    {
+     "letter": "X",
+     "count": 1,
+     "file": "knowledge-x.json"
+    },
+    {
+     "letter": "Y",
+     "count": 1,
+     "file": "knowledge-y.json"
+    },
+    {
+     "letter": "Z",
+     "count": 2,
+     "file": "knowledge-z.json"
+    }
+   ]
+  },
+  {
+   "dept": "Inventions",
+   "slug": "inventions",
+   "floor": 3,
+   "count": 4504,
+   "letters": [
+    {
+     "letter": "#",
+     "count": 38,
+     "file": "inventions-#.json"
+    },
+    {
+     "letter": "A",
+     "count": 534,
+     "file": "inventions-a.json"
+    },
+    {
+     "letter": "B",
+     "count": 244,
+     "file": "inventions-b.json"
+    },
+    {
+     "letter": "C",
+     "count": 540,
+     "file": "inventions-c.json"
+    },
+    {
+     "letter": "D",
+     "count": 188,
+     "file": "inventions-d.json"
+    },
+    {
+     "letter": "E",
+     "count": 136,
+     "file": "inventions-e.json"
+    },
+    {
+     "letter": "F",
+     "count": 227,
+     "file": "inventions-f.json"
+    },
+    {
+     "letter": "G",
+     "count": 102,
+     "file": "inventions-g.json"
+    },
+    {
+     "letter": "H",
+     "count": 98,
+     "file": "inventions-h.json"
+    },
+    {
+     "letter": "I",
+     "count": 115,
+     "file": "inventions-i.json"
+    },
+    {
+     "letter": "J",
+     "count": 18,
+     "file": "inventions-j.json"
+    },
+    {
+     "letter": "K",
+     "count": 15,
+     "file": "inventions-k.json"
+    },
+    {
+     "letter": "L",
+     "count": 131,
+     "file": "inventions-l.json"
+    },
+    {
+     "letter": "M",
+     "count": 424,
+     "file": "inventions-m.json"
+    },
+    {
+     "letter": "N",
+     "count": 82,
+     "file": "inventions-n.json"
+    },
+    {
+     "letter": "O",
+     "count": 91,
+     "file": "inventions-o.json"
+    },
+    {
+     "letter": "P",
+     "count": 576,
+     "file": "inventions-p.json"
+    },
+    {
+     "letter": "Q",
+     "count": 17,
+     "file": "inventions-q.json"
+    },
+    {
+     "letter": "R",
+     "count": 115,
+     "file": "inventions-r.json"
+    },
+    {
+     "letter": "S",
+     "count": 415,
+     "file": "inventions-s.json"
+    },
+    {
+     "letter": "T",
+     "count": 198,
+     "file": "inventions-t.json"
+    },
+    {
+     "letter": "U",
+     "count": 43,
+     "file": "inventions-u.json"
+    },
+    {
+     "letter": "V",
+     "count": 69,
+     "file": "inventions-v.json"
+    },
+    {
+     "letter": "W",
+     "count": 83,
+     "file": "inventions-w.json"
+    },
+    {
+     "letter": "Y",
+     "count": 3,
+     "file": "inventions-y.json"
+    },
+    {
+     "letter": "Z",
+     "count": 2,
+     "file": "inventions-z.json"
+    }
+   ]
+  },
+  {
+   "dept": "Compute",
+   "slug": "compute",
+   "floor": 4,
+   "count": 121,
+   "letters": [
+    {
+     "letter": "A",
+     "count": 14,
+     "file": "compute-a.json"
+    },
+    {
+     "letter": "B",
+     "count": 2,
+     "file": "compute-b.json"
+    },
+    {
+     "letter": "C",
+     "count": 8,
+     "file": "compute-c.json"
+    },
+    {
+     "letter": "D",
+     "count": 6,
+     "file": "compute-d.json"
+    },
+    {
+     "letter": "E",
+     "count": 4,
+     "file": "compute-e.json"
+    },
+    {
+     "letter": "F",
+     "count": 3,
+     "file": "compute-f.json"
+    },
+    {
+     "letter": "G",
+     "count": 6,
+     "file": "compute-g.json"
+    },
+    {
+     "letter": "H",
+     "count": 5,
+     "file": "compute-h.json"
+    },
+    {
+     "letter": "I",
+     "count": 6,
+     "file": "compute-i.json"
+    },
+    {
+     "letter": "J",
+     "count": 1,
+     "file": "compute-j.json"
+    },
+    {
+     "letter": "L",
+     "count": 3,
+     "file": "compute-l.json"
+    },
+    {
+     "letter": "M",
+     "count": 6,
+     "file": "compute-m.json"
+    },
+    {
+     "letter": "N",
+     "count": 4,
+     "file": "compute-n.json"
+    },
+    {
+     "letter": "O",
+     "count": 2,
+     "file": "compute-o.json"
+    },
+    {
+     "letter": "P",
+     "count": 7,
+     "file": "compute-p.json"
+    },
+    {
+     "letter": "Q",
+     "count": 2,
+     "file": "compute-q.json"
+    },
+    {
+     "letter": "R",
+     "count": 5,
+     "file": "compute-r.json"
+    },
+    {
+     "letter": "S",
+     "count": 27,
+     "file": "compute-s.json"
+    },
+    {
+     "letter": "T",
+     "count": 5,
+     "file": "compute-t.json"
+    },
+    {
+     "letter": "U",
+     "count": 1,
+     "file": "compute-u.json"
+    },
+    {
+     "letter": "W",
+     "count": 1,
+     "file": "compute-w.json"
+    },
+    {
+     "letter": "X",
+     "count": 1,
+     "file": "compute-x.json"
+    },
+    {
+     "letter": "Z",
+     "count": 2,
+     "file": "compute-z.json"
+    }
+   ]
+  },
+  {
+   "dept": "Tools",
+   "slug": "tools",
+   "floor": 5,
+   "count": 1620,
+   "letters": [
+    {
+     "letter": "A",
+     "count": 82,
+     "file": "tools-a.json"
+    },
+    {
+     "letter": "B",
+     "count": 2,
+     "file": "tools-b.json"
+    },
+    {
+     "letter": "C",
+     "count": 15,
+     "file": "tools-c.json"
+    },
+    {
+     "letter": "D",
+     "count": 130,
+     "file": "tools-d.json"
+    },
+    {
+     "letter": "E",
+     "count": 255,
+     "file": "tools-e.json"
+    },
+    {
+     "letter": "F",
+     "count": 7,
+     "file": "tools-f.json"
+    },
+    {
+     "letter": "G",
+     "count": 4,
+     "file": "tools-g.json"
+    },
+    {
+     "letter": "H",
+     "count": 6,
+     "file": "tools-h.json"
+    },
+    {
+     "letter": "I",
+     "count": 122,
+     "file": "tools-i.json"
+    },
+    {
+     "letter": "J",
+     "count": 2,
+     "file": "tools-j.json"
+    },
+    {
+     "letter": "K",
+     "count": 2,
+     "file": "tools-k.json"
+    },
+    {
+     "letter": "L",
+     "count": 4,
+     "file": "tools-l.json"
+    },
+    {
+     "letter": "M",
+     "count": 8,
+     "file": "tools-m.json"
+    },
+    {
+     "letter": "N",
+     "count": 1,
+     "file": "tools-n.json"
+    },
+    {
+     "letter": "O",
+     "count": 2,
+     "file": "tools-o.json"
+    },
+    {
+     "letter": "P",
+     "count": 9,
+     "file": "tools-p.json"
+    },
+    {
+     "letter": "Q",
+     "count": 2,
+     "file": "tools-q.json"
+    },
+    {
+     "letter": "R",
+     "count": 11,
+     "file": "tools-r.json"
+    },
+    {
+     "letter": "S",
+     "count": 774,
+     "file": "tools-s.json"
+    },
+    {
+     "letter": "T",
+     "count": 3,
+     "file": "tools-t.json"
+    },
+    {
+     "letter": "U",
+     "count": 2,
+     "file": "tools-u.json"
+    },
+    {
+     "letter": "V",
+     "count": 47,
+     "file": "tools-v.json"
+    },
+    {
+     "letter": "W",
+     "count": 130,
+     "file": "tools-w.json"
+    }
+   ]
+  }
+ ]
+}

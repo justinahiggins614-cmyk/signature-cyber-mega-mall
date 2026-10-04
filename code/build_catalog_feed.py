@@ -116,21 +116,22 @@ def main():
                 + "</sitemapindex>")
     print("refreshed sitemap.xml with %d entries" % len(entries))
 
-    # 4. add the feed to sitemap-pages.xml
+    # 4. add the feed + the product archive (browse.html) to sitemap-pages.xml
     sp = os.path.join(ROOT, "sitemap-pages.xml")
     with open(sp, encoding="utf-8") as f:
         content = f.read()
-    feed_url = BASE + "products-catalog.json"
-    if feed_url not in content:
-        content = content.replace(
-            "</urlset>",
-            '<url><loc>%s</loc><changefreq>weekly</changefreq></url>\n</urlset>' % feed_url,
-        )
-        with open(sp, "w", encoding="utf-8") as f:
-            f.write(content)
-        print("added products-catalog.json to sitemap-pages.xml")
-    else:
-        print("products-catalog.json already in sitemap-pages.xml")
+    for url, label in ((BASE + "products-catalog.json", "products-catalog.json"),
+                       (BASE + "browse.html", "browse.html")):
+        if url not in content:
+            content = content.replace(
+                "</urlset>",
+                '<url><loc>%s</loc><changefreq>weekly</changefreq></url>\n</urlset>' % url,
+            )
+            with open(sp, "w", encoding="utf-8") as f:
+                f.write(content)
+            print("added %s to sitemap-pages.xml" % label)
+        else:
+            print("%s already in sitemap-pages.xml" % label)
 
 
 if __name__ == "__main__":

@@ -7,7 +7,9 @@ Reads products.json (+ data/products/manifest.json) and writes:
   mall-map.json          -- machine-readable mall map (floors/departments/stores)
   api.json               -- regenerated from counts.json (never hand-edited)
 Also re-stamps the build-time count into index.html's static fallback chips
-and the JSON-LD description so crawlers / no-JS see a labeled snapshot.
+and the JSON-LD description so crawlers / no-JS see a labeled snapshot,
+rebuilds data/browse/ A-Z bucket files (same run — never one run behind),
+and re-stamps browse.html's header chips.
 
 Deterministic: same input => byte-identical output (except generated_at).
 Run any time products.json changes:  python3 code/build_counts.py
@@ -155,6 +157,8 @@ def main():
         f.write("\n")
 
     stamp_index_html(counts)
+    rebuild_browse_buckets()
+    stamp_browse_html(counts)
     print("counts.json: total=%d origins=%s" % (total, by_origin))
     print("inventory sha256: %s" % inv_sha)
 
@@ -178,12 +182,46 @@ def stamp_index_html(counts):
     assert n1 == 1, "livecounts marker not found"
 
     # 2) JSON-LD WebSite description count
-    h2, n2 = re.subn(r"The universal storefront layer over the JAH Network: [0-9,]+ original Signature products",
+    h2, n2 = re.subn(r"The universal storefront layer over the JAH Network: [0-9,]+ products",
                      "The universal storefront layer over the JAH Network: %s products" % total_fmt, h2, count=1)
     assert n2 == 1, "JSON-LD description marker not found"
 
     open(p, "w", encoding="utf-8").write(h2)
     print("index.html re-stamped: %s products (snapshot %s)" % (total_fmt, snap))
+
+def rebuild_browse_buckets():
+    """Rebuild the browse.html A-Z bucket files from products.json.
+
+    Runs in the SAME invocation as the count stamp (never one run behind):
+    products.json is already flushed by the harvest, so buckets and counts
+    always agree.
+    """
+    import build_browse_buckets
+    build_browse_buckets.main()
+
+def stamp_browse_html(counts):
+    """Re-stamp the build-time count into browse.html's header chips + JSON-LD.
+    Same labeled-snapshot convention as stamp_index_html."""
+    p = os.path.join(ROOT, "browse.html")
+    h = open(p, encoding="utf-8").read()
+    total_fmt = "%s" % f"{counts['total']:,}"
+    snap = counts["inventory_snapshot"]
+
+    h2, n1 = re.subn(r'<span class="bchip" id="browsetotal">.*?</span>',
+                     '<span class="bchip" id="browsetotal">%s products on the shelves</span>'
+                     % total_fmt, h, count=1)
+    assert n1 == 1, "browsetotal marker not found"
+    h2, n2 = re.subn(r'<span class="bchip" id="browsesnap">.*?</span>',
+                     '<span class="bchip" id="browsesnap">snapshot %s</span>'
+                     % snap, h2, count=1)
+    assert n2 == 1, "browsesnap marker not found"
+    h2, n3 = re.subn(r"The full product archive of the Signature Cyber Mega-Mall: [0-9,]+ products",
+                     "The full product archive of the Signature Cyber Mega-Mall: %s products"
+                     % total_fmt, h2, count=1)
+    assert n3 == 1, "browse JSON-LD marker not found"
+
+    open(p, "w", encoding="utf-8").write(h2)
+    print("browse.html re-stamped: %s products (snapshot %s)" % (total_fmt, snap))
 
 if __name__ == "__main__":
     main()

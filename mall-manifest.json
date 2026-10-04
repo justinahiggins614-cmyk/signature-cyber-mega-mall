@@ -7,10 +7,10 @@
  "network_site_count": 25,
  "inventory_version": "mall-harvest",
  "inventory_count": 8821,
- "inventory_sha256": "c2e71469f023751df3a87f8455a46425921c59720c76cf36ff851be2a41eab1d",
+ "inventory_sha256": "aa84f31fc0b9dc33a39bec70ba343aad5fe98d933bb76228bfc7f48c53091b36",
  "schema_version": "JAH-MALL-RECORD/1.0",
  "generator_version": "mall-harvest",
- "last_updated": "2026-10-03T13:49:30Z",
+ "last_updated": "2026-10-04T05:03:08Z",
  "departments": [
   {
    "id": "AI & Software",
