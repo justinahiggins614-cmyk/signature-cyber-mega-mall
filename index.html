@@ -265,7 +265,7 @@ paint();})();
 <a class="mbtn" href="#entrymap">🗺 ENTRY MAP</a>
 <a class="mbtn" href="#browse" onclick="document.getElementById('q').focus()">SEARCH</a>
 <a class="mbtn" href="#mallguide">MALL MAP &amp; GUIDE</a>
-<a class="mbtn" href="javascript:void(0)" onclick="MallTour.start()">✦ TOUR</a>
+<a class="mbtn" href="javascript:void(0)" onclick="MallGuide.open()">? GUIDE</a>
 <a class="mbtn cartbtn" href="javascript:void(0)" onclick="Cart.open()">CART (<span id="cartcount">0</span>)</a>
 <span class="browsenote">browse only — purchasing is not active</span>
 </div>
@@ -605,7 +605,7 @@ const Mall={
       return;
     }
     document.getElementById("guidemapsvg").innerHTML=this.mapSVG(true);
-    let h=`<div style="margin:4px 0 12px"><button class="btn go" onclick="MallTour.start()">✦ START THE 1-MINUTE TOUR</button></div>`;
+    let h=`<div style="margin:4px 0 12px"><button class="btn go" onclick="MallGuide.open()">? OPEN THE WELCOME GUIDE</button></div>`;
     h+=`<div class="gnote">🗺 <b>Welcome to the mall.</b> This whole website is laid out like a 1980s–90s shopping mall: you came in the <b style="color:#ff3b3b">main entrance ★ (YOU ARE HERE)</b>, and every floor above is a department full of storefronts. Tap any store on the map to walk in. Everything costs <b>$0.00</b> — grand opening, take it all.</div>`;
     h+=`<h3 style="color:var(--cy);letter-spacing:.1em;margin:18px 0 6px">THE FLOORS</h3>`;
     h+=m.depts.map((d,i)=>{
@@ -699,14 +699,14 @@ const Mall={
     }
     this.deptCache[dept]=out;return out;
   },
-  async enterDept(dept){
+  async enterDept(dept,noScroll){
     this.curDept=dept;this.curLetter="";this.curQuery="";document.getElementById("q").value="";
     document.querySelectorAll(".fchip").forEach(x=>x.classList.toggle("on",x.dataset.f.replace("&amp;","&")===dept));
     this.syncDeptNav();
     document.getElementById("az").querySelectorAll("button").forEach((b,i)=>b.classList.toggle("on",i===0));
     this.grid=[];this.shown=0;document.getElementById("morewrap").style.display="";
     this.grid=(await this.deptProducts(dept)).filter(p=>this.matchOrigin(p));this.searchDone=true;this.render(true);
-    document.getElementById("browse").scrollIntoView({behavior:"smooth"});
+    if(!noScroll){try{document.getElementById("browse").scrollIntoView({behavior:"smooth"})}catch(e){}}
   },
   async search(reset){
     if(reset){this.shown=0;document.getElementById("grid").innerHTML="";document.getElementById("morewrap").style.display=""}
@@ -1274,7 +1274,7 @@ function hasDeepLink(){try{return !!new URLSearchParams(location.search).get("pr
 /* (a) scroll position: throttled save, restore after content settles */
 var st=null;
 window.addEventListener("scroll",function(){if(st)return;st=setTimeout(function(){st=null;try{localStorage.setItem(sk("y"),String(window.scrollY||window.pageYOffset||0));}catch(e){}},300);},{passive:true});
-function doScroll(){if(recScrolled||hasDeepLink())return;try{var y=parseInt(localStorage.getItem(sk("y"))||"0",10);if(y>0)window.scrollTo(0,y);}catch(e){}}
+/* TOUR FIX 2026-10-04: load-time auto-scroll removed — the page stays put on load. */ function doScroll(){}
 /* (b) department tabs: save on fchip/deptnav click, restore once the mall boots */
 document.addEventListener("click",function(e){
   var b=e.target&&e.target.closest?e.target.closest("button.fchip, #deptnav button"):null;
@@ -1285,10 +1285,10 @@ function restoreTabs(){
   try{
     if(typeof Mall==="undefined"||!Mall.enterDept)return;
     var d=localStorage.getItem(sk("dept"));
-    if(d&&d!=="all")Mall.enterDept(d);
+    if(d&&d!=="all")Mall.enterDept(d,true);
   }catch(e){}
 }
-/* (c) last-viewed product: ?product= at load + on Mall.openProduct; scroll into view on a bare listing */
+/* (c) last-viewed product: ?product= at load + on Mall.openProduct (auto-scroll on load removed — page stays put) */
 try{
   var pm=new URLSearchParams(location.search).get("product");
   if(pm&&pm.trim())localStorage.setItem(sk("rec"),pm.trim());
@@ -1297,18 +1297,7 @@ try{
     Mall.openProduct=function(pid){try{localStorage.setItem(sk("rec"),pid);}catch(e){}return _op.call(Mall,pid);};
   }
 }catch(e){}
-function restoreRec(){
-  try{
-    if(hasDeepLink()||typeof Mall==="undefined")return;
-    var pid=localStorage.getItem(sk("rec"));
-    if(!pid)return;
-    var cards=document.querySelectorAll("#grid .card");
-    for(var k=0;k<cards.length;k++){
-      var oc=cards[k].getAttribute("onclick")||"";
-      if(oc.indexOf("'"+pid+"'")>=0){cards[k].scrollIntoView();recScrolled=true;break;}
-    }
-  }catch(e){}
-}
+/* TOUR FIX 2026-10-04: load-time card-jump removed — the page stays put on load. */ function restoreRec(){}
 var tries=0;
 var iv=setInterval(function(){
   tries++;
@@ -1323,89 +1312,53 @@ window.addEventListener("load",function(){setTimeout(doScroll,900);});
 })();
 </script>
 <script>
-/* ============ Site 26 usability wave: first-time spotlight tour ============
-   1-minute tour: entry map, floors, dept shortcuts, search, product card, cart.
-   WHAT / WHAT-IT-DOES / HOW per step. localStorage "jah-tour-seen-mall",
-   Start/Skip, Next/Back, Esc + arrow keys, 44px+ touch targets, never blocks
-   content (no full-screen scrim). Theme untouched — reuses the mall palette. */
-const MallTour={
+/* ============ First-visit welcome guide (TOUR FIX 2026-10-04) ============
+   NEW STANDARD: a centered welcome OVERLAY that teaches in plain steps.
+   NO auto-scroll. NO scrollIntoView. NO spotlight-jump. The page stays put;
+   the overlay does the teaching. One OK button dismisses; the user takes
+   control. Dismissal persists in localStorage (never shows again); the
+   "? GUIDE" button re-opens it anytime. Phone-friendly, plain JS/CSS. */
+var MallGuide={
+  key:"jah-guide-seen-mall",
   steps:[
-    {sel:"#entrymap",tag:"STOP 1 · ENTRY MAP",
-     body:"<b>WHAT:</b> the mall's front door — a live directory map of every floor.<br><b>WHAT IT DOES:</b> every glowing storefront is a real department shelf.<br><b>HOW:</b> tap any storefront to walk straight into that department."},
-    {sel:"#floors",tag:"STOP 2 · MALL DIRECTORY",
-     body:"<b>WHAT:</b> one card per department (floor), each stamped with its live product count.<br><b>WHAT IT DOES:</b> ENTER FLOOR opens that department's shelves.<br><b>HOW:</b> tap ENTER FLOOR on any card."},
-    {sel:"#deptnav",tag:"STOP 3 · DEPARTMENT SHORTCUTS",
-     body:"<b>WHAT:</b> a sticky shortcut bar listing every stocked department.<br><b>WHAT IT DOES:</b> jumps the shelves to that department instantly.<br><b>HOW:</b> tap a department pill."},
-    {sel:"#q",tag:"STOP 4 · SEARCH",
-     body:"<b>WHAT:</b> searches all 8,821 products by name, description, or record ID (try JAH-MALL-000123).<br><b>WHAT IT DOES:</b> filters the shelves live as you type; the A–Z bar and origin chips narrow it further.<br><b>HOW:</b> type in the search box — clear it to see the whole shelf again."},
-    {sel:"#grid .card",tag:"STOP 5 · PRODUCT CARD",
-     body:"<b>WHAT:</b> every card is a real record from a JAH Network site.<br><b>WHAT IT DOES:</b> opens the full product page — source-record link, copy/download, read aloud, cart, and a personalized name plate.<br><b>HOW:</b> tap any card."},
-    {sel:".cartbtn",tag:"STOP 6 · CART",
-     body:"<b>WHAT:</b> your shopping cart.<br><b>WHAT IT DOES:</b> holds products you want to take. Everything is $0.00 — checkout stays disabled until the site goes active.<br><b>HOW:</b> tap CART in the top menu."}
+    "Welcome to the <b>Signature Cyber Mega-Mall</b> — one mall over the whole JAH Network. Every product on the shelf is a real record deep-linked to its live source site, and everything costs <b>$0.00</b> during the grand opening.",
+    "Tap a storefront on the <b>ENTRY MAP</b> or a department card to walk that floor. Or tap <b>SEARCH</b> and type what you want — it searches all 8,821 products by name, description, or record ID.",
+    "Tap any <b>product card</b> to open its full page: source-record link, copy/download, read aloud, and a personalized name plate.",
+    "Tap <b>CART</b> in the top menu to hold products you want to take. Checkout stays disabled until the site goes active — nothing can be purchased right now."
   ],
-  i:0,
-  btn(ghost){return "min-height:44px;min-width:44px;padding:10px 18px;border-radius:10px;font-weight:800;cursor:pointer;font-size:.9em;"+(ghost?"background:none;border:1px solid var(--line);color:var(--dim)":"background:#0e2a44;border:1px solid var(--cy);color:var(--cy)")},
-  start(){this.i=0;try{localStorage.setItem("jah-tour-seen-mall","1")}catch(e){}this.show()},
-  show(){
-    this.clear();
-    const st=this.steps[this.i], total=this.steps.length;
-    const t=st.sel?document.querySelector(st.sel):null;
-    const tip=document.createElement("div");tip.id="malltour-tip";
-    tip.setAttribute("role","dialog");tip.setAttribute("aria-label","Mall tour: "+st.tag);
-    tip.style.cssText="position:fixed;z-index:10005;max-width:min(92vw,380px);background:#0a0f22;border:2px solid var(--cy);border-radius:14px;padding:16px 18px;color:var(--txt);font-size:.92em;box-shadow:0 0 40px #00f0ff66";
-    tip.innerHTML='<div style="color:var(--cy);font-weight:800;letter-spacing:.12em;font-size:.8em;margin-bottom:8px">'+st.tag+" · "+(this.i+1)+" of "+total+"</div>"
-      +'<div style="line-height:1.6;margin-bottom:12px">'+st.body+"</div>"
-      +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
-      +(this.i>0?'<button data-t="back" style="'+this.btn()+'">← BACK</button>':"")
-      +(this.i<total-1?'<button data-t="next" style="'+this.btn()+'">NEXT →</button>':'<button data-t="end" style="'+this.btn()+'">FINISH ✓</button>')
-      +'<button data-t="end" style="'+this.btn(true)+'">SKIP TOUR</button></div>'
-      +'<div style="margin-top:8px;font-size:.75em;color:var(--dim)">Esc closes · ← → move between stops</div>';
-    document.body.appendChild(tip);
-    let r=null;
-    try{if(t){const b=t.getBoundingClientRect();r={x:b.left,y:b.top,w:b.width,h:b.height}}}catch(e){}
-    if(r&&r.w>0){
-      const hl=document.createElement("div");hl.id="malltour-hl";
-      hl.style.cssText="position:fixed;z-index:10004;border:3px solid var(--mg);border-radius:12px;box-shadow:0 0 30px #ff2fb388;pointer-events:none;left:"+Math.max(4,r.x-8)+"px;top:"+Math.max(4,r.y-8)+"px;width:"+(r.w+16)+"px;height:"+(r.h+16)+"px";
-      document.body.appendChild(hl);
-      try{t.scrollIntoView({block:"center",behavior:"smooth"})}catch(e){}
-      const tw=tip.offsetWidth||340, th=tip.offsetHeight||260;
-      let x=Math.min(Math.max(12,r.x),Math.max(12,window.innerWidth-tw-12)), y=r.y+r.h+18;
-      if(y+th>window.innerHeight-12)y=Math.max(12,r.y-th-18);
-      tip.style.left=x+"px";tip.style.top=Math.max(12,y)+"px";
-    }else{tip.style.left="50%";tip.style.top="12%";tip.style.transform="translateX(-50%)"}
-    const self=this;
-    tip.querySelectorAll("button").forEach(function(b){b.addEventListener("click",function(){const a=b.getAttribute("data-t");if(a==="next"){self.i++;self.show()}else if(a==="back"){self.i--;self.show()}else self.end()})});
+  seen:function(){try{return !!localStorage.getItem(this.key)}catch(e){return true}},
+  open:function(){
+    this.close();
+    var self=this;
+    var ov=document.createElement("div");ov.id="mallguide-ov";
+    ov.style.cssText="position:fixed;inset:0;z-index:10006;background:rgba(3,5,12,.82);display:flex;align-items:center;justify-content:center;padding:16px";
+    var box=document.createElement("div");
+    box.setAttribute("role","dialog");box.setAttribute("aria-label","Welcome guide: how to use this site");
+    box.style.cssText="max-width:min(94vw,430px);max-height:88vh;overflow:auto;background:#0a0f22;border:2px solid var(--cy);border-radius:14px;padding:20px 22px;color:var(--txt);font-size:.95em;line-height:1.65;box-shadow:0 0 40px #00f0ff66";
+    var h='<div style="text-align:center;margin-bottom:14px"><div style="color:var(--cy);font-weight:800;letter-spacing:.15em;font-size:.8em;margin-bottom:6px">FIRST VISIT &middot; HOW TO USE THIS SITE</div><div style="font-size:1.15em;font-weight:800;color:#fff">\ud83d\uddfa\ufe0f Welcome to the Mega-Mall</div></div>';
+    for(var i=0;i<this.steps.length;i++){
+      h+='<div style="display:flex;gap:10px;margin-bottom:12px"><span style="flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:#0e2a44;border:1px solid var(--cy);color:var(--cy);font-weight:800;display:flex;align-items:center;justify-content:center">'+(i+1)+'</span><div>'+this.steps[i]+'</div></div>';
+    }
+    h+='<div style="text-align:center;margin-top:16px"><button id="mallguide-ok" style="min-height:52px;min-width:180px;padding:14px 30px;border-radius:12px;font-weight:800;font-size:1.05em;cursor:pointer;background:#0e2a44;border:2px solid var(--cy);color:var(--cy)">OK \u2014 GOT IT \u2713</button></div>';
+    box.innerHTML=h;
+    ov.appendChild(box);document.body.appendChild(ov);
+    ov.addEventListener("click",function(e){if(e.target===ov)self.dismiss()});
+    document.getElementById("mallguide-ok").addEventListener("click",function(){self.dismiss()});
+    try{document.getElementById("mallguide-ok").focus()}catch(e){}
   },
-  clear(){["malltour-tip","malltour-hl","malltour-prompt"].forEach(function(id){const e=document.getElementById(id);if(e&&e.parentNode)e.parentNode.removeChild(e)})},
-  end(){this.clear();try{localStorage.setItem("jah-tour-seen-mall","1")}catch(e){}},
-  prompt(){
-    const already=document.getElementById("malltour-prompt");
-    if(already&&already.innerHTML)return;
-    const p=document.createElement("div");p.id="malltour-prompt";
-    p.setAttribute("role","dialog");p.setAttribute("aria-label","First visit prompt");
-    p.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:10005;background:#0a0f22;border:2px solid var(--gd);border-radius:14px;padding:14px 18px;color:var(--txt);font-size:.92em;max-width:94vw;box-shadow:0 8px 30px #ffcf4d55;text-align:center";
-    p.innerHTML='🗺 <b>First time at the mall?</b> Take the 1-minute spotlight tour.<div style="display:flex;gap:8px;justify-content:center;margin-top:10px"><button data-t="go" style="'+this.btn()+'">START TOUR</button><button data-t="no" style="'+this.btn(true)+'">SKIP</button></div>';
-    document.body.appendChild(p);
-    const self=this;
-    p.querySelectorAll("button").forEach(function(b){b.addEventListener("click",function(){self.clear();if(b.getAttribute("data-t")==="go")self.start();else self.end()})});
-  },
-  maybe(){
-    let seen=false;try{seen=!!localStorage.getItem("jah-tour-seen-mall")}catch(e){seen=true}
-    if(seen)return;
-    const self=this;let n=0;
-    const iv=setInterval(function(){n++;
-      const ready=(typeof Mall!=="undefined"&&Mall.manifest&&document.getElementById("floordir")&&document.getElementById("floordir").children.length>0);
-      if(ready||n>60){clearInterval(iv);if(ready)self.prompt()}
+  close:function(){var e=document.getElementById("mallguide-ov");if(e&&e.parentNode)e.parentNode.removeChild(e)},
+  dismiss:function(){this.close();try{localStorage.setItem(this.key,"1")}catch(e){}},
+  maybe:function(){
+    if(this.seen())return;
+    var self=this,n=0;
+    var iv=setInterval(function(){n++;
+      var ready=(typeof Mall!=="undefined"&&Mall.manifest);
+      if(ready||n>60){clearInterval(iv);if(ready)self.open()}
     },500);
   }
 };
-document.addEventListener("keydown",function(e){
-  if(!document.getElementById("malltour-tip"))return;
-  if(e.key==="Escape")MallTour.end();
-  else if(e.key==="ArrowRight"&&MallTour.i<MallTour.steps.length-1){MallTour.i++;MallTour.show()}
-  else if(e.key==="ArrowLeft"&&MallTour.i>0){MallTour.i--;MallTour.show()}
-});
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){MallTour.maybe()});else MallTour.maybe();
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){MallGuide.maybe()});else MallGuide.maybe();
+
 </script>
 </body>
 </html>
