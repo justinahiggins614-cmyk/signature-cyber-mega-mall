@@ -343,6 +343,35 @@ paint();})();
 </div>
 </footer>
 <script>
+/* ==== JAH global read-aloud controller (one per page): no stacked voices, no orphan audio ==== */
+(function(){
+if(window.__JAHREAD)return;
+var R={audios:[],lastTap:0,lastLabel:""};
+R.stopAll=function(){
+ try{if(window.speechSynthesis)window.speechSynthesis.cancel();}catch(e){}
+ try{if(window.responsiveVoice&&window.responsiveVoice.cancel)window.responsiveVoice.cancel();}catch(e){}
+ var i,a;
+ for(i=0;i<R.audios.length;i++){a=R.audios[i];try{a.pause();}catch(e){}try{a.removeAttribute("src");}catch(e){}try{a.load();}catch(e){}}
+ R.audios.length=0;
+ var els=document.querySelectorAll("audio");
+ for(i=0;i<els.length;i++){try{els[i].pause();}catch(e){}}
+};
+R.reg=function(a){if(a&&R.audios.indexOf(a)<0)R.audios.push(a);return a;};
+R.playGuard=function(label){
+ var now=Date.now();
+ if(now-R.lastTap<450&&label===R.lastLabel){R.lastTap=0;R.lastLabel="";R.stopAll();return false;}
+ R.lastTap=now;R.lastLabel=String(label||"");
+ R.stopAll();return true;
+};
+try{
+ var NativeAudio=window.Audio;
+ window.Audio=function(src){var a=src===undefined?new NativeAudio():new NativeAudio(src);R.reg(a);return a;};
+ window.Audio.prototype=NativeAudio.prototype;
+}catch(e){}
+window.__JAHREAD=R;
+})();
+</script>
+<script>
 "use strict";
 /* ============ deterministic PRNG + generative cyber art ============ */
 function xmur3(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}return()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return(h^=h>>>16)>>>0}}
@@ -1029,7 +1058,7 @@ function fxPlay(list,i,tier,retry,proven){
   try{var pr=a.play();if(pr&&pr.catch)pr.catch(function(){if(!proven&&i===0)audMsg("The browser blocked audio — tap the pause button, then play, to start it.")})}catch(e){}
 }
 function fxStart(text){FX.active=true;FX.errs=0;fxPlay(fxChunks(text),0,0,0,false)}
-function fxStop(){FX.active=false;if(FX.audio){try{FX.audio.pause()}catch(e){}FX.audio=null}}
+function fxStop(){try{if(window.__JAHREAD)window.__JAHREAD.stopAll();}catch(e){}FX.active=false;if(FX.audio){try{FX.audio.pause()}catch(e){}FX.audio=null}}
 function auPauseToggle(){
   if(!AU.active)return;
   if(FX.active){
@@ -1041,6 +1070,7 @@ function auPauseToggle(){
   AU.paused=!AU.paused;auPaintBtn();
 }
 function auStop(){
+  try{if(window.__JAHREAD)window.__JAHREAD.stopAll();}catch(e){}
   AU.active=false;AU.paused=false;AU.q=[];AU.i=0;fxStop();
   try{if(window.speechSynthesis)window.speechSynthesis.cancel()}catch(e){}
   auShowBar(false);
@@ -1188,6 +1218,7 @@ const Aud={
     this.read(this.productText(p),"Product: "+(p.n||p.name||id));
   },
   read(text,label){
+    if(window.__JAHREAD&&!window.__JAHREAD.playGuard("read"))return;
     auStop();
     text=String(text||"");if(!text){audMsg("Nothing to read here yet.");return}
     AU.label=label||"";AU.q=auChunks(AU.label+". "+text);AU.i=0;AU.active=true;AU.paused=false;
