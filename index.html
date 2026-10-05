@@ -264,9 +264,9 @@ paint();})();
 
 <div class="bigmenu">
 <a class="mbtn" href="#floors">FLOORS</a>
-<a class="mbtn" href="#browse">BROWSE</a>
+<a class="mbtn" href="browse.html">BROWSE</a>
 <a class="mbtn" href="#entrymap">🗺 ENTRY MAP</a>
-<a class="mbtn" href="#browse" onclick="document.getElementById('q').focus()">SEARCH</a>
+<a class="mbtn" href="browse.html">SEARCH</a>
 <a class="mbtn" href="#mallguide">MALL MAP &amp; GUIDE</a>
 <a class="mbtn" href="javascript:void(0)" onclick="MallGuide.open()">? GUIDE</a>
 <a class="mbtn cartbtn" href="javascript:void(0)" onclick="Cart.open()">CART (<span id="cartcount">0</span>)</a>
@@ -310,27 +310,6 @@ paint();})();
 <section class="sec" id="floors">
 <h2>Mall Directory <span class="sub" id="floorsub">pick a department to enter</span></h2>
 <div class="floors" id="floordir"></div>
-</section>
-<section class="sec" id="browse">
-<h2>Browse the Shelves <span class="sub">Search, filter, A–Z — counts come live from the inventory index</span></h2>
-<div class="deptnav" id="deptnav" aria-label="Department navigation"></div>
-<div class="toolbar">
-<input type="search" id="q" placeholder="Search products — name, description, record ID…" aria-label="Search products">
-<span id="matchcount" aria-live="polite"></span>
-<span id="fchips" style="display:contents"></span>
-<span id="ochips" style="display:contents" aria-label="Filter by origin"></span>
-</div>
-<div class="finder" id="finder">
-<div class="fhead"><span class="fhost">🛎</span><div><b>FINDER HOST</b><span>your mall concierge — describe what you're looking for in plain words</span></div></div>
-<div class="jah-aiid" role="note" aria-label="AI identity card"><b>AI IDENTITY</b> · <b>Name:</b> Finder Host · <b>Duties:</b> walks shoppers to the right shelf from plain-words descriptions; answers product questions from the product’s own page · <b>Engine:</b> on-page rule-based responder — no external model, no invented results</div>
-<div class="flog" id="flog" aria-live="polite"></div>
-<div class="frow"><input id="fq" maxlength="140" placeholder="Describe what you're looking for…" aria-label="Ask the finder host"><button class="btn go" onclick="Finder.ask()">ASK</button></div>
-<div class="fchips" id="finderchips"></div>
-</div>
-<div class="az" id="az"></div>
-<div class="grid" id="grid"></div>
-<div class="more" id="morewrap"><button id="morebtn" onclick="Mall.more()">Load more</button></div>
-<p id="noresults" style="display:none;color:var(--dim);text-align:center">No products match — try another search or floor.</p>
 </section>
 <section class="sec" id="mallguide">
 <h2>Mall Map &amp; Guide <span class="sub">How this website-mall works — the full tour</span></h2>
@@ -473,12 +452,10 @@ const Mall={
     try{this.counts=await(await fetch("counts.json")).json()}catch(e){}
     this.loadError=!this.manifest;
     this.renderSiteLine();
-    this.renderCounts();this.renderChips();this.renderOriginChips();this.renderDeptNav();this.renderEntryMap();this.renderFloors();this.renderAZ();
-    this.bindUI();
+    this.renderCounts();this.renderEntryMap();this.renderFloors();
     this.renderGuide();
-    Finder.greet();
     const pid=new URLSearchParams(location.search).get("product");
-    if(pid){this.openProduct(pid)}else{this.enterDept("all")}
+    if(pid){this.openProduct(pid)}
   },
   /* Site #10 fix wave: network site line renders from the network manifest (never hard-coded) */
   async renderSiteLine(){
@@ -506,7 +483,7 @@ const Mall={
         Object.keys(c.by_dept).filter(d=>c.by_dept[d]>0).map(d=>`<span class="chip">${this.esc(d)}: <b>${c.by_dept[d].toLocaleString()}</b></span>`).join("")+
         `<span class="chip">Grand-opening price: <b>$0.00</b> everything</span>`+
         `<span class="chip">DATA VERSION: <b>${this.esc(c.dataset_version)}</b> · ${this.esc(c.generated_at)}</span>`;
-      document.getElementById("q").placeholder=`Search ${total} products — name, description, record ID…`;
+      const qi=document.getElementById("q");if(qi)qi.placeholder=`Search ${total} products — name, description, record ID…`;
       return;
     }
     if(!m){el.innerHTML="<span class='chip'>inventory offline</span> <button class='fchip' onclick='Mall.boot()'>Retry</button>";return}
@@ -514,7 +491,7 @@ const Mall={
     el.innerHTML=`<span class="chip">Products on shelf: <b>${total}</b></span>`+
       m.depts.filter(d=>m.by_dept[d]>0).map(d=>`<span class="chip">${this.esc(d)}: <b>${m.by_dept[d].toLocaleString()}</b></span>`).join("")+
       `<span class="chip">Grand-opening price: <b>$0.00</b> everything</span>`;
-    document.getElementById("q").placeholder=`Search ${total} products — name, description, record ID…`;
+    const qi=document.getElementById("q");if(qi)qi.placeholder=`Search ${total} products — name, description, record ID…`;
   },
   renderFloors(){
     const m=this.manifest,el=document.getElementById("floordir");
@@ -758,6 +735,9 @@ const Mall={
     this.deptCache[dept]=out;return out;
   },
   async enterDept(dept,noScroll){
+    /* inline shelf browser moved 2026-10-05 to browse.html — route there */
+    if(dept&&dept!=="all"){this.goDept(dept);return;}
+    location.href="browse.html";return;
     this.curDept=dept;this.curLetter="";this.curQuery="";document.getElementById("q").value="";
     document.querySelectorAll(".fchip").forEach(x=>x.classList.toggle("on",x.dataset.f.replace("&amp;","&")===dept));
     this.syncDeptNav();
