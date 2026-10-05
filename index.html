@@ -1110,7 +1110,7 @@ function finderSocial(q){
  var low=String(q||"").toLowerCase(),t=" "+low+" ";
  if(/^(hi|hii+|hey|hello|yo|howdy|good\s?(morning|afternoon|evening|day)|greetings|sup|hiya)\b/.test(low)||
     /\b(what are your duties|what is your duty|what do you do|what can you do|your duties|your job|your role|your abilities|explain your duties|who are you|your name|introduce yourself|what are you for|how are you|thank|bye|goodbye)\b/.test(t))
-  return JAHtalk.reply(FINDER_PROFILE,q);
+  return JAHtalk.chatFor(FINDER_PROFILE,"page:finder").reply(q);
  return null;
 }
 function finderGuard(html){
