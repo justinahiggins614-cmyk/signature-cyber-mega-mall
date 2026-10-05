@@ -3,7 +3,7 @@
 Samples REAL records from Manon's existing site clones and emits
 JAH-MALL-###### product records. Deterministic: sorted (dept, source, sid)
 ordering => stable IDs across runs. No invented source records."""
-import json, gzip, glob, os, math, html
+import json, gzip, glob, os, math, html, sys
 from datetime import date
 from urllib.parse import quote
 
@@ -191,6 +191,11 @@ def main():
     print(f'HARVESTED {n} products')
     print(json.dumps(manifest['by_dept'], indent=1))
     print(json.dumps(manifest['by_src'], indent=1))
+    # count freshness: rebuild counts.json/manifests and re-stamp the page chips
+    # in the SAME run (never one harvest behind).
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import build_counts
+    build_counts.main()
 
 if __name__ == '__main__':
     main()
