@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>try{if(localStorage.getItem("jah-theme")==="dark")document.documentElement.dataset.theme="dark";}catch(e){}</script>
+<script src="js/signin.js"></script>
+<script>/* JAHProfile storage wrapper (JAHPS): public visitors pass keys through unprefixed (behavior unchanged); signed-in profiles get per-profile namespaced storage. */
+var JAHPS=function(){try{return (typeof JAHProfile!=="undefined")&&JAHProfile.store?JAHProfile.store:localStorage;}catch(e){return localStorage;}}();</script>
+<script>try{if(JAHPS.get("jah-theme")==="dark")document.documentElement.dataset.theme="dark";}catch(e){}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Signature Cyber Mega-Mall — Grand Opening · Everything $0.00</title>
@@ -254,7 +257,7 @@ html[data-theme="dark"] img,html[data-theme="dark"] video,html[data-theme="dark"
 /* UX-2026-10-03: dark-mode toggle wiring (opt-in; default look unchanged) */
 (function(){var b=document.getElementById("jah-theme-toggle");
 function paint(){try{b.innerHTML=(document.documentElement.dataset.theme==="dark")?"&#9728;":"&#9681;";}catch(e){}}
-b.addEventListener("click",function(){try{var d=document.documentElement;var dark=d.dataset.theme!=="dark";d.dataset.theme=dark?"dark":"";localStorage.setItem("jah-theme",dark?"dark":"light");}catch(e){}paint();});
+b.addEventListener("click",function(){try{var d=document.documentElement;var dark=d.dataset.theme!=="dark";d.dataset.theme=dark?"dark":"";JAHPS.set("jah-theme",dark?"dark":"light");}catch(e){}paint();});
 paint();})();
 </script>
 
@@ -679,8 +682,8 @@ const Mall={
     body.innerHTML=h;
   },
   /* ---- "Make it yours" personalization ---- */
-  custStore(){try{return JSON.parse(localStorage.getItem("mallcustom")||"{}")}catch(e){return{}}},
-  custSave(pid,name,cid){try{const o=this.custStore();o[pid]={name,cid};localStorage.setItem("mallcustom",JSON.stringify(o))}catch(e){}},
+  custStore(){try{return JSON.parse(JAHPS.get("mallcustom")||"{}")}catch(e){return{}}},
+  custSave(pid,name,cid){try{const o=this.custStore();o[pid]={name,cid};JAHPS.set("mallcustom",JSON.stringify(o))}catch(e){}},
   plateText(pid,name,cid,loc,prodName){
     return ["========================================",
     " SIGNATURE CYBER MEGA-MALL — PERSONALIZED PLATE",
@@ -989,7 +992,7 @@ const Mall={
   fileReport(pid,rid){
     const cat=(document.getElementById("repcat")||{}).value||"other";
     const rec={report_id:rid,product_id:pid,report_type:cat,date:new Date().toISOString(),status:"filed_locally",resolution:"pending review"};
-    try{const k="mall_reports",all=JSON.parse(localStorage.getItem(k)||"[]");all.push(rec);localStorage.setItem(k,JSON.stringify(all))}catch(e){}
+    try{const k="mall_reports",all=JSON.parse(JAHPS.get(k)||"[]");all.push(rec);JAHPS.set(k,JSON.stringify(all))}catch(e){}
     document.getElementById("mrep")._rec=rec;
     const out=document.getElementById("repout");
     if(out)out.innerHTML=`Filed <b>${this.esc(rid)}</b> (${this.esc(cat)}) — status: filed locally, pending review. <button class="jrp-btn" onclick="Mall.copyReport()">COPY REPORT</button>`;
@@ -1110,7 +1113,9 @@ function finderSocial(q){
  var low=String(q||"").toLowerCase(),t=" "+low+" ";
  if(/^(hi|hii+|hey|hello|yo|howdy|good\s?(morning|afternoon|evening|day)|greetings|sup|hiya)\b/.test(low)||
     /\b(what are your duties|what is your duty|what do you do|what can you do|your duties|your job|your role|your abilities|explain your duties|who are you|your name|introduce yourself|what are you for|how are you|thank|bye|goodbye)\b/.test(t))
-  return JAHtalk.chatFor(FINDER_PROFILE,"page:finder").reply(q);
+  /* JAHProfile: per-profile chat memory ("train once"); public keeps the shared key + 24h expiry. */
+  var _ck=(typeof JAHProfile!=="undefined")?JAHProfile.chatKey("page:finder"):"page:finder";
+  return JAHtalk.chatFor(FINDER_PROFILE,_ck).reply(q);
  return null;
 }
 function finderGuard(html){
@@ -1258,8 +1263,8 @@ function toast(msg){
 /* ============ cart (checkout hooks present but INACTIVE) ============ */
 const Cart={
   items:[], // product ids
-  load(){try{this.items=JSON.parse(localStorage.getItem("mallcart")||"[]")}catch(e){this.items=[]}},
-  save(){localStorage.setItem("mallcart",JSON.stringify(this.items))},
+  load(){try{this.items=JSON.parse(JAHPS.get("mallcart")||"[]")}catch(e){this.items=[]}},
+  save(){JAHPS.set("mallcart",JSON.stringify(this.items))},
   async add(pid){
     if(!this.items.includes(pid))this.items.push(pid);
     this.save();this.render();toast("Added to cart — "+pid);this.open();
@@ -1329,28 +1334,28 @@ var recScrolled=false;
 function hasDeepLink(){try{return !!new URLSearchParams(location.search).get("product");}catch(e){return false;}}
 /* (a) scroll position: throttled save, restore after content settles */
 var st=null;
-window.addEventListener("scroll",function(){if(st)return;st=setTimeout(function(){st=null;try{localStorage.setItem(sk("y"),String(window.scrollY||window.pageYOffset||0));}catch(e){}},300);},{passive:true});
+window.addEventListener("scroll",function(){if(st)return;st=setTimeout(function(){st=null;try{JAHPS.set(sk("y"),String(window.scrollY||window.pageYOffset||0));}catch(e){}},300);},{passive:true});
 /* TOUR FIX 2026-10-04: load-time auto-scroll removed — the page stays put on load. */ function doScroll(){}
 /* (b) department tabs: save on fchip/deptnav click, restore once the mall boots */
 document.addEventListener("click",function(e){
   var b=e.target&&e.target.closest?e.target.closest("button.fchip, #deptnav button"):null;
   if(!b||b.disabled||b.classList.contains("off"))return;
-  try{localStorage.setItem(sk("dept"),b.dataset.f||b.dataset.d||"all");}catch(x){}
+  try{JAHPS.set(sk("dept"),b.dataset.f||b.dataset.d||"all");}catch(x){}
 },true);
 function restoreTabs(){
   try{
     if(typeof Mall==="undefined"||!Mall.enterDept)return;
-    var d=localStorage.getItem(sk("dept"));
+    var d=JAHPS.get(sk("dept"));
     if(d&&d!=="all")Mall.enterDept(d,true);
   }catch(e){}
 }
 /* (c) last-viewed product: ?product= at load + on Mall.openProduct (auto-scroll on load removed — page stays put) */
 try{
   var pm=new URLSearchParams(location.search).get("product");
-  if(pm&&pm.trim())localStorage.setItem(sk("rec"),pm.trim());
+  if(pm&&pm.trim())JAHPS.set(sk("rec"),pm.trim());
   if(typeof Mall!=="undefined"&&typeof Mall.openProduct==="function"){
     var _op=Mall.openProduct;
-    Mall.openProduct=function(pid){try{localStorage.setItem(sk("rec"),pid);}catch(e){}return _op.call(Mall,pid);};
+    Mall.openProduct=function(pid){try{JAHPS.set(sk("rec"),pid);}catch(e){}return _op.call(Mall,pid);};
   }
 }catch(e){}
 /* TOUR FIX 2026-10-04: load-time card-jump removed — the page stays put on load. */ function restoreRec(){}
@@ -1382,7 +1387,7 @@ var MallGuide={
     "Tap any <b>product card</b> to open its full page: source-record link, copy/download, read aloud, and a personalized name plate.",
     "Tap <b>CART</b> in the top menu to hold products you want to take. Checkout stays disabled until the site goes active — nothing can be purchased right now."
   ],
-  seen:function(){try{return !!localStorage.getItem(this.key)}catch(e){return true}},
+  seen:function(){try{return !!JAHPS.get(this.key)}catch(e){return true}},
   open:function(){
     this.close();
     var self=this;
@@ -1403,7 +1408,7 @@ var MallGuide={
     try{document.getElementById("mallguide-ok").focus({preventScroll:true})}catch(e){}
   },
   close:function(){var e=document.getElementById("mallguide-ov");if(e&&e.parentNode)e.parentNode.removeChild(e)},
-  dismiss:function(){this.close();try{localStorage.setItem(this.key,"1")}catch(e){}},
+  dismiss:function(){this.close();try{JAHPS.set(this.key,"1")}catch(e){}},
   maybe:function(){
     if(this.seen())return;
     var self=this,n=0;
@@ -1415,6 +1420,17 @@ var MallGuide={
 };
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){MallGuide.maybe()});else MallGuide.maybe();
 
+</script>
+<script>
+/* JAHProfile sign-in — mount the header button. signin.js is already loaded in <head>. */
+(function () {
+  var mount = document.querySelector('header .booksearch') ||
+              document.querySelector('nav.jtabbar') ||
+              document.querySelector('header nav') ||
+              document.querySelector('header') ||
+              document.body;
+  if (window.JAHProfile && JAHProfile.ui) JAHProfile.ui.renderButton(mount);
+})();
 </script>
 </body>
 </html>

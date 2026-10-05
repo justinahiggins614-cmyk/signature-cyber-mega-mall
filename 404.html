@@ -41,5 +41,17 @@
   <a href="browse/departments.html">All departments</a>
 </div>
 <footer>SIGNATURE CYBER MEGA-MALL · GRAND OPENING · EVERYTHING $0.00</footer>
+<script src="js/signin.js"></script>
+<script>
+(function () {
+  /* mount into the header; falls back gracefully when the header markup differs */
+  var mount = document.querySelector('header .booksearch') ||
+              document.querySelector('nav.jtabbar') ||
+              document.querySelector('header nav') ||
+              document.querySelector('header') ||
+              document.body;
+  if (window.JAHProfile && JAHProfile.ui) JAHProfile.ui.renderButton(mount);
+})();
+</script>
 </body>
 </html>
