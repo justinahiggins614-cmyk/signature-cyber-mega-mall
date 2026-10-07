@@ -300,6 +300,22 @@ paint();})();
 <a class="jtab" href="browse.html">📚 1 Million Archive</a>
 
 </nav>
+<section class="sec" id="entrymap">
+<h2>Entry Mall Map <span class="sub">You are here — tap any store to walk in</span></h2>
+<div class="mallmap" id="entrymapsvg"></div>
+<p class="mapcap">★ red star = the main entrance · <b>YOU ARE HERE</b> · every floor and storefront draws live from the inventory index, so new departments appear on the map by themselves</p>
+<p style="text-align:center;margin-top:12px"><a class="btn go" href="browse.html">📖 Browse all products A–Z — the full product archive →</a></p>
+</section>
+<section class="sec" id="floors">
+<h2>Mall Directory <span class="sub" id="floorsub">pick a department to enter</span></h2>
+<div class="floors" id="floordir"></div>
+</section>
+<section class="sec" id="mallguide">
+<h2>Mall Map &amp; Guide <span class="sub">How this website-mall works — the full tour</span></h2>
+<div class="mallmap" id="guidemapsvg"></div>
+<div id="guidebody"><p style="color:var(--dim)">Guide loading…</p></div>
+</section>
+</div>
 <footer>
 <div class="wrap">
 <p><span class="badge">HONEST LABELING</span>Every product shows its source site and record type: <b>original</b> = made by Justin Addam Higgins / the Signature system · <b>generated</b> = produced by his deterministic generators · <b>external</b> = real public records harvested from public sources (e.g. public patents). Draft specs are marked Draft — ready to file, NOT filed, NOT granted patents.</p>
@@ -1054,10 +1070,11 @@ function finderSocial(q){
  if(typeof JAHtalk==="undefined")return null;
  var low=String(q||"").toLowerCase(),t=" "+low+" ";
  if(/^(hi|hii+|hey|hello|yo|howdy|good\s?(morning|afternoon|evening|day)|greetings|sup|hiya)\b/.test(low)||
-    /\b(what are your duties|what is your duty|what do you do|what can you do|your duties|your job|your role|your abilities|explain your duties|who are you|your name|introduce yourself|what are you for|how are you|thank|bye|goodbye)\b/.test(t))
+    /\b(what are your duties|what is your duty|what do you do|what can you do|your duties|your job|your role|your abilities|explain your duties|who are you|your name|introduce yourself|what are you for|how are you|thank|bye|goodbye)\b/.test(t)){
   /* JAHProfile: per-profile chat memory ("train once"); public keeps the shared key + 24h expiry. */
   var _ck=(typeof JAHProfile!=="undefined")?JAHProfile.chatKey("page:finder"):"page:finder";
   return JAHtalk.chatFor(FINDER_PROFILE,_ck).reply(q);
+ }
  return null;
 }
 function finderGuard(html){
@@ -1151,10 +1168,9 @@ const Finder={
     const inp=document.getElementById("hq"),q=inp.value.trim(),c=this.cur;
     if(!q||!c)return;
     this.hsay(this.esc(q),"you");inp.value="";
-    const soc2=finderSocial(q);
-    if(soc2!==null){this.hsay(this.esc(soc2),"host");return}
     const t=q.toLowerCase(),f=c.full,l=c.loc,E=this.esc.bind(this);
     let a;
+    /* product-grounded answers first: the host's job is this product's page */
     if(/price|cost|how much|free|\$/.test(t))a=`It's <b>$0.00</b> — grand opening, everything in the mall is free right now.`;
     else if(/where|location|aisle|floor|shelf|locate|find it|find this/.test(t))a=`You're looking at it: <b>${E(f.dept)}</b> · Floor <b>F${l.floor}</b> · Aisle <b>${E(l.aisle)}</b>.`;
     else if(/what is|what's|describe|description|about this|about it|info/.test(t))a=`<b>${E(f.name)}</b>. ${E(f.blurb)||"No description on file — open the source record for the full file."}`;
@@ -1162,7 +1178,10 @@ const Finder={
     else if(/\bid\b|sku|product id|product number/.test(t))a=`Product ID: <b>${E(f.id)}</b>.`;
     else if(/department|dept/.test(t))a=`It lives in the <b>${E(f.dept)}</b> department, Floor <b>F${l.floor}</b>.`;
     else if(/buy|checkout|pay|purchase|order|cart/.test(t))a=`Checkout is inactive — credit-card payments are held until the site goes active. For now, everything is $0.00.`;
-    else a=`I can only answer from this product's page — try asking about its <b>price</b>, <b>location</b>, <b>department</b>, <b>source record</b>, or <b>ID</b>.`;
+    if(a!==undefined){this.hsay(a,"host");return}
+    const soc2=finderSocial(q);
+    if(soc2!==null){this.hsay(this.esc(soc2),"host");return}
+    a=`I can only answer from this product's page — try asking about its <b>price</b>, <b>location</b>, <b>department</b>, <b>source record</b>, or <b>ID</b>.`;
     this.hsay(a,"host");
   }
 };
@@ -1190,9 +1209,10 @@ const Aud={
     if(window.__JAHREAD&&!window.__JAHREAD.playGuard("read"))return;
     auStop();
     text=String(text||"");if(!text){audMsg("Nothing to read here yet.");return}
-    AU.label=label||"";AU.q=auChunks(AU.label+". "+text);AU.i=0;AU.active=true;AU.paused=false;
-    if(hasSpeech()){try{window.speechSynthesis.cancel()}catch(e){}auSpeakNext()}
-    else{auShowBar(true);auPaintBtn();fxStart(AU.label+". "+text);audMsg("This browser has no built-in voice — reading with the online voice instead.")}
+    AU.label=label||"";AU.q=[];AU.i=0;AU.active=true;AU.paused=false;
+    /* Audio-only: speechSynthesis is dead in Facebook's in-app browser and silent
+       on his phone — the tiered online voice (ResponsiveVoice -> Google TTS) works everywhere. */
+    auShowBar(true);auPaintBtn();fxStart(AU.label+". "+text);
   }
 };
 /* Site #10 diagnostic FIX-06: animated toast notifications */
@@ -1212,13 +1232,13 @@ const Cart={
     this.save();this.render();toast("Added to cart — "+pid);this.open();
   },
   remove(pid){this.items=this.items.filter(x=>x!==pid);this.save();this.render();toast("Removed from cart — "+pid)},
-  open(){document.getElementById("drawer").classList.add("open");var sc=document.getElementById("drscrim");if(sc)sc.classList.add("on");lockScroll()},
-  close(){document.getElementById("drawer").classList.remove("open");var sc=document.getElementById("drscrim");if(sc)sc.classList.remove("on");unlockScroll()},
+  open(){var dr=document.getElementById("drawer");if(dr)dr.classList.add("open");var sc=document.getElementById("drscrim");if(sc)sc.classList.add("on");lockScroll()},
+  close(){var dr=document.getElementById("drawer");if(dr)dr.classList.remove("open");var sc=document.getElementById("drscrim");if(sc)sc.classList.remove("on");unlockScroll()},
   async render(){
-    document.getElementById("cartcount").textContent=this.items.length;
+    const ccEl=document.getElementById("cartcount");if(ccEl)ccEl.textContent=this.items.length;
     var cc=document.querySelector(".cartbtn");
     if(cc){cc.classList.remove("pulse");void cc.offsetWidth;cc.classList.add("pulse");setTimeout(function(){cc.classList.remove("pulse")},500)}
-    const box=document.getElementById("cartitems");
+    const box=document.getElementById("cartitems");if(!box)return;
     if(!this.items.length){box.innerHTML="<p style='color:var(--dim)'>Cart is empty — everything is $0.00, so fill it up.</p>";return}
     if(!Mall.idx){try{Mall.idx=JSON.parse(await gz("data/products/index.json.gz"))}catch(e){}}
     box.innerHTML=this.items.map(id=>{
@@ -1245,6 +1265,22 @@ function unlockScroll(){_scrollLocks=Math.max(0,_scrollLocks-1);if(!_scrollLocks
 Cart.load();
 document.addEventListener("DOMContentLoaded",()=>{Mall.boot();Cart.render()});
 </script>
+<div class="drscrim" id="drscrim" onclick="Cart.close()"></div>
+<aside class="drawer" id="drawer" aria-label="Shopping cart">
+  <header><h3>🛒 YOUR CART</h3><button class="close" onclick="Cart.close()" aria-label="Close cart">✕</button></header>
+  <div class="items" id="cartitems"></div>
+  <footer>
+    <div class="totalrow"><span>Total</span><b>$0.00</b></div>
+    <div class="inactive-note">⛔ CHECKOUT IS INACTIVE — everything is $0.00 during the grand opening. Nothing can be purchased.</div>
+    <button class="checkout" disabled>CHECKOUT (INACTIVE)</button>
+  </footer>
+</aside>
+<div class="overlay" id="overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Product details">
+    <div class="art" id="mart"></div>
+    <div class="mbody" id="mbody"></div>
+  </div>
+</div>
 <div id="aubar" style="display:none">
   <span id="aulabel">Reading&hellip;</span>
   <button id="aupause" type="button">&#10074;&#10074; Pause</button>
